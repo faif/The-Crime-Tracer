@@ -1,0 +1,608 @@
+/*
+ *  This file is the main stylesheet for the website's webpages.
+ *
+ *  Copyright (c) 2007 Vít Dlouhý <ahoj@nuvio.cz>
+ *                2008 Efstathios Xatzikiriakidis <lafs@ixthis.gr>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+* {
+  min-height : 1px;
+}
+
+body {
+  border : 0;
+  margin : 0;
+  padding : 0;
+  background : #f2f5fe url("../graphics/bg.png") repeat-x 0 0;
+  font : 70%/160% "verdana", sans-serif;
+  color : #192666;
+}
+
+a {
+  color : #192666;
+  background-color : inherit;
+}
+
+a:hover {
+  color : #4f6ad7;
+  background-color : inherit;
+}
+
+p {
+  border : 0;
+  margin : 15px 0;
+  padding : 0;
+}
+
+div {
+  display : block;
+  border : 0;
+  margin : 0;
+  padding : 0;
+}
+
+h1, h2, h3, h4, h5 {
+  border : 0;
+  margin : 15px 0 10px 0;
+  padding : 0;
+  font-weight : bold;
+}
+
+h1 {
+  font-size : 260%;
+  line-height : 100%;
+  font-family : "georgia", serif;
+  font-weight : normal;
+}
+
+h2 {
+  font-size : 180%;
+  line-height : 100%;
+  font-family : "georgia", serif;
+  font-weight : normal;
+}
+
+h3 {
+  font-size : 120%;
+  line-height : 100%;
+  font-weight : bold;
+}
+
+h4 {
+  font-size : 120%;
+}
+
+h5 {
+  font-size : 100%;
+}
+
+table {
+  display : table;
+  border-collapse : collapse;
+  margin : 15px 0;
+  padding : 0;
+  border : 1px solid #b7caf6;
+  font-size : 100%;
+}
+
+tr {
+  display : table-row;
+}
+
+th, td {
+  display : table-cell;
+  border : 1px solid #b7caf6;
+  margin : 0;
+  padding : 5px;
+  vertical-align : top;
+  text-align : left;
+}
+
+th {
+  background : #e7ecfd;
+  text-align : center;
+  color : #192666;
+  font-weight : bold;
+}
+
+ul, ol {
+  display : block;
+  border : 0;
+  margin : 15px 0 15px 40px;
+  padding : 0;
+}
+
+ol {
+  list-style-type : decimal;
+}
+
+li {
+  display : list-item;
+  border : 0;
+  margin : 0;
+  padding : 0;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin : 0 0 0 20px;
+}
+
+dl {
+  border : 0;
+  margin : 15px 0;
+  padding : 0;
+}
+
+dt {
+  border : 0;
+  margin : 0;
+  padding : 0;
+  font-weight : bold;
+}
+
+dd {
+  border : 0;
+  margin : 0 0 0 30px;
+  padding : 0;
+}
+
+form {
+  border : 0;
+  margin : 0;
+  padding : 0;
+}
+
+fieldset {
+  border : 1px solid #ccc;
+  margin : 15px 0;
+  padding : 10px;
+}
+
+legend {
+  margin-left : 10px;
+  font-size : 100%;
+  font-weight : bold;
+  color : #008;
+  background-color : inherit;
+}
+
+hr {
+  display : block;
+  height : 1px;
+  margin : 10px 0;
+  padding : 0;
+  background : #ccc;
+  border : 0 solid;
+  color : inherit;
+}
+
+a, img, span {
+  border : 0;
+  margin : 0;
+  padding : 0;
+}
+
+abbr, acronym {
+  border-bottom : 1px dotted #ccc;
+  cursor : help;
+}
+
+del {
+  text-decoration : line-through;
+}
+
+strong {
+  font-weight : bold;
+}
+
+cite, em, q, var {
+  font-style : italic;
+}
+
+code, kbd, samp {
+  font-family : monospace;
+  font-size : 110%;
+}
+
+.box {
+  min-height : 1px;
+}
+
+.box:after {
+  content : ".";
+  display : block;
+  line-height : 0;
+  font-size : 0;
+  visibility : hidden;
+  clear : both;
+}
+
+#main {
+  width : 770px;
+  margin : 50px auto 0 auto;
+}
+
+#header {
+  position : relative;
+  width : 770px;
+  height : 100px;
+  margin : 0;
+  padding : 0;
+  background : #233c9b url("../graphics/header.jpg") no-repeat 0 0;
+  color : #fff;
+}
+
+#header #logo {
+  position : absolute;
+  top : 35px;
+  left : 35px;
+  margin : 0;
+}
+
+#header #logo a {
+  color : inherit;
+  background-color : inherit;
+}
+
+#header #logo a:hover {
+  color : #b5c4e3;
+  background-color : inherit;
+  text-decoration : underline;
+}
+
+#tabs {
+  color : inherit;
+  background : #192666;
+  margin : 0 5px;
+  padding : 10px 0 0 0;
+}
+
+#tabs ul {
+  margin : 0 10px;
+  padding : 0;
+  list-style : none;
+}
+
+#tabs ul li {
+  margin : 0 5px 0 0;
+  padding : 0;
+  float : left;
+}
+
+#tabs ul li a {
+  display : block;
+  position : relative;
+  padding : 7px 15px;
+  border : 0;
+  background : url("../graphics/tab-link.png") repeat-x 0 0;
+  background-color : inherit;
+  color : #b5c4e3;
+  font-weight : bold;
+  text-decoration : none;
+  cursor : pointer;
+}
+
+#tabs ul li a span.tab-l, #tabs ul li a:hover span.tab-l {
+  position : absolute;
+  top : 0;
+  left : 0;
+  width : 8px;
+  height : 8px;
+  background : url("../graphics/tab-link-l.png") no-repeat 0 0;
+}
+
+#tabs ul li a span.tab-r, #tabs ul li a:hover span.tab-r {
+  position : absolute;
+  top : 0;
+  right : 0;
+  width : 8px;
+  height : 8px;
+  background : url("../graphics/tab-link-r.png") no-repeat 100% 0;
+}
+
+#tabs ul li a:hover {
+  background : url("../graphics/tab-hover.png") repeat-x 0 0;
+  background-color : inherit;
+  color : #eee;
+}
+
+#tabs ul li a:hover span.tab-l {
+  background : url("../graphics/tab-hover-l.png") no-repeat 0 0;
+}
+
+#tabs ul li a:hover span.tab-r {
+  background : url("../graphics/tab-hover-r.png") no-repeat 100% 0;
+}
+
+#tabs ul li#active a {
+  background : #fff;
+  color : #ff9000;
+}
+
+#tabs ul li#active a span.tab-l {
+  position : absolute;
+  top : 0;
+  left : 0;
+  width : 8px;
+  height : 8px;
+  background : url("../graphics/tab-active-l.png") no-repeat 0 0;
+}
+
+#tabs ul li#active a span.tab-r {
+  position : absolute;
+  top : 0;
+  right : 0;
+  width : 8px;
+  height : 8px;
+  background : url("../graphics/tab-active-r.png") no-repeat 100% 0;
+}
+
+#page {
+  width : 770px;
+  min-height : 1px;
+  background : #fff url("../graphics/bg-page.png") repeat-y 0 0;
+  color : inherit;
+}
+
+#page-in {
+  min-height : 1px;
+  padding : 10px 0;
+  background : url("../graphics/bg-page-in.png") no-repeat 0 0;
+}
+
+#strip {
+  position : relative;
+  clear : both;
+  padding : 3px 20px 10px 20px;
+  color : #6182d1;
+  background-color : inherit;
+}
+
+#strip p {
+  margin : 0;
+}
+
+#strip a {
+  color : #6182d1;
+  background-color : inherit;
+}
+
+#strip a:hover {
+  color : #192665;
+  background-color : inherit;
+}
+
+#strip #path {
+  width : 520px;
+  margin : 0;
+  padding : 0;
+}
+
+#strip #rss {
+  float : right;
+  width : 175px;
+  margin : 0;
+  padding-left : 25px;
+  background : url("../graphics/ico-rss.png") no-repeat 0 50%;
+}
+
+#content {
+  float : left;
+  width : 530px;
+  margin : 0;
+  padding : 0 0 0 20px;
+}
+
+#content .article {
+  clear : both;
+  margin : 0;
+  padding : 20px;
+  background : url("../graphics/content-article-bg.png") no-repeat 0 0;
+}
+
+#content .article h2 {
+  margin : 0 -20px;
+  padding : 10px;
+  background : #dee5fd url("../graphics/content-title-bg.png") repeat-y 0 0;
+  color : #192666;
+}
+
+#content .article h2 span {
+  background : url("../graphics/ico-list.png") no-repeat 0 50%;
+  padding-left : 25px;
+}
+
+#content .article p {
+  text-align : justify;
+}
+
+#content .info {
+  margin : 10px 0;
+  padding-bottom : 8px;
+  border-bottom : 1px solid #dee5fd;
+  color : #6685cc;
+  background-color : inherit;
+}
+
+#content .info a {
+  color : #6685cc;
+  background-color : inherit;
+}
+
+#content .info a:hover {
+  color : #ff9000;
+  background-color : inherit;
+}
+
+#content .info span.date, #content .info span.user {
+  padding-left : 15px;
+}
+
+#content .info span.date {
+  background : url("../graphics/ico-date.png") no-repeat 0 50%;
+}
+
+#content .info span.user {
+  background : url("../graphics/ico-user.png") no-repeat 0 50%;
+  margin-left : 8px;
+}
+
+#col {
+  float : left;
+  width : 200px;
+  margin : 0;
+  padding : 0;
+  background : #cedbf9 url("../graphics/col-bg.png") repeat-y 0 0;
+  color : inherit;
+}
+
+#col-in {
+  padding : 20px 10px;
+  background : url("../graphics/col-top.png") no-repeat 0 0;
+}
+
+#col h3 {
+  padding : 13px 15px 14px 15px;
+  margin : 0 -10px 15px -10px;
+  background : #a0b9f3 url("../graphics/col-title-bg.png") repeat-y 0 0;
+  color : #192666;
+}
+
+#col ul#category {
+  margin : 15px 0;
+  padding : 0;
+  list-style : none;
+}
+
+#col ul#category li {
+  margin : 0;
+  padding : 0;
+  border-bottom : 1px solid #e0e8fa;
+}
+
+#col ul#category li a {
+  display : block;
+  padding : 3px 0 3px 22px;
+  background : url("../graphics/ico-archive-1.png") no-repeat 5px 6px;
+  text-decoration : none;
+}
+
+#col ul#category li a:hover {
+  background-color : #d3dff8;
+  color : #192666;
+}
+
+#col ul#category li#category-active a {
+  background : #e0e8fa url("../graphics/ico-archive-2.png") no-repeat 5px 50%;
+  color : inherit;
+  font-weight : bold;
+}
+
+#col ul#links {
+  margin : 15px 0;
+  padding : 0;
+  list-style : none;
+}
+
+#col ul#links li {
+  margin : 0;
+  padding : 0;
+  border-bottom : 1px solid #e0e8fa;
+}
+
+#col ul#links li a {
+  display : block;
+  padding : 3px 0 3px 22px;
+  background : url("../graphics/ico-links.png") no-repeat 5px 6px;
+  text-decoration : none;
+}
+
+#col ul#links li a:hover {
+  background-color : #d3dff8;
+  color : #192666;
+}
+
+#footer {
+  position : relative;
+  clear : both;
+  width : 770px;
+  height : 60px;
+  margin-bottom : 50px;
+  background : url("../graphics/footer.png") no-repeat 0 0;
+  background-color : inherit;
+  color : #6685cc;
+}
+
+#footer a {
+  color : #6685cc;
+  background-color : inherit;
+}
+
+#footer a:hover {
+  color : #192665;
+  background-color : inherit;
+}
+
+#top {
+  position : absolute;
+  top : 55px;
+  left : 550px;
+}
+
+#top p {
+  position : relative;
+  width : 30px;
+  height : 25px;
+  margin : 0;
+  overflow : hidden;
+}
+
+#top p span {
+  display : block;
+  position : absolute;
+  left : 0;
+  top : 0;
+  z-index : 1;
+  width : 30px;
+  height : 25px;
+  background : url("../graphics/ico-top.png") no-repeat 0 0;
+  cursor : pointer;
+}
+
+#top a:hover span {
+  background : url("../graphics/ico-top.png") no-repeat -30px 0;
+}
+
+#footer p#message {
+  position : absolute;
+  top : 10px;
+  left : 40px;
+  margin : 0;
+}
+
+#createdby {
+  position : absolute;
+  top : -2px;
+  left : 562px;
+  margin : 0;
+  color : #8ca3d8;
+  background-color : inherit;
+}
+
+#createdby a {
+  color : #8ca3d8;
+  background-color : inherit;
+}

@@ -1,0 +1,23 @@
+The Crime Tracer -- `NEWS' starts here.
+
+News:
+
+  History of user-visible changes.
+
+  v. 1.0
+
+    * Default game's resolution is 800x600.
+
+    * Add options pair `-a, --author'.
+    * Add options pair `-c, --copyleft'.
+    * Add options pair `-l, --license'.
+    * Add options pair `-h, --help'.
+
+    * Add options pair `-f, --fullscreen'.
+    * Add options pair `-v, --verbose'.
+
+    * Add long option `--nomusic'.
+    * Add long option `--nosound'.
+    * Add long option `--version'.
+
+The Crime Tracer -- `NEWS' ends here.

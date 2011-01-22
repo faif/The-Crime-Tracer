@@ -1,0 +1,30 @@
+The Crime Tracer -- `BUGS' starts here.
+
+Bugs:
+
+  This release of the `The Crime Tracer' (version 1.0) is almost stable.
+  Some bugs surely remain.
+
+  Please include enough information for the maintainers
+  in order to reproduce the problem. Generally speaking,
+  that means:
+
+    - the contents of any input files necessary to reproduce the
+      bug and command line invocations of the program(s) involved.
+    - a description of the problem and any samples of the erroneous output.
+    - the version number of the program(s) involved (use --version).
+    - hardware, operating system, and compiler versions (uname -a).
+    - anything else that you think would be helpful.
+
+  See also the file `TODO'.
+
+
+    * ALSA lib pcm.c:7223:(snd_pcm_recover) underrun occured. Undeterministic
+      bug. It is generated sometimes when the game begins normal execution.
+      Invocation: ``python tct.py''
+      Python version: 2.6.6
+      Pygame version: 1.8.1release-2+b1 (python-pygame debian package)
+      Linux isengard 2.6.32-5-686 #1 SMP Thu Nov 25 18:43:34 UTC 2010 i686 GNU/Linux
+
+
+The Crime Tracer -- `BUGS' ends here.
