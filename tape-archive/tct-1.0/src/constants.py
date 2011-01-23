@@ -196,7 +196,7 @@ GAME_GPL = (
 ## the authors of the game
 GAME_AUTHORS = (
   "Sakis Kasampalis <faif at dtek period gr>",
-  "Efstathios Xatzikiriakidis <lafs at ixthis period gr>",
+  "Efstathios Xatzikiriakidis <contact at efxa period gr>",
   "Nikolaos Delis <delis89 at gmail period com>",
   "Dimitris Ventas <rayone99 at gmail period com>",
   "Mihalis Kasampalis <michaelkas at hotmail period com>"

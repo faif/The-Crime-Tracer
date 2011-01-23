@@ -1,10 +1,10 @@
 ##
+#
 #    Game's Credits Screen Text Content.
 #		
 #    This file is part of The Crime Tracer.
 #
-#    Copyright (C) 2009 Efstathios Xatzikiriakidis <lafs at ixthis period gr> 
-#    Copyright (C) 2009, 2010 Sakis Kasampalis <faif at gnu period org> 
+#    Copyright (C) 2009-11 Free Software Gaming Geeks <fsgamedev@googlegroups.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,12 +19,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#  Content Format Notes:
-#    * lines having as first non white character `#' are ignored
-#    * font size tags: [XL], [LARGE], [MEDIUM], [SMALL]
+##
+#
+#    Content Format Notes:
+#      * lines having as first non white character `#' are ignored
+#
+#      * font size tags: [XL], [LARGE], [MEDIUM], [SMALL]
 #        - use only one font size tag on each line
-#    * main authors tags: [FAIF], [LAFS]
+#
+#      * main authors tags: [FAIF], [LAFS]
 #        - use only one author tag on each line
+#
 ##
 [XL]The Crime Tracer
 [MEDIUM]The suspect passer-by
