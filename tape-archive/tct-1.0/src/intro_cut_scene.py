@@ -224,7 +224,9 @@ class IntroCutScene(Base):
     # @param slides the list of slides images
     def __init__(self, slides):
         self.event_manager = EventManager()
-        self.keyboard_controller = KeyboardController(self.event_manager) 
+        # TODO use the keyboard controller instead of reimplementing
+        # the keyboard functionality inside the cut scene controller
+        # self.keyboard_controller = KeyboardController(self.event_manager) 
         self.gui_view = IntroCutSceneGUIView(self.event_manager, slides)
         self.controller = IntroCutSceneController(self.event_manager, self.gui_view)
 
