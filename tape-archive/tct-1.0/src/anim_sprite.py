@@ -56,6 +56,7 @@ class SpriteFactory(Base):
     ## create a new animated sprite at an optional given position
     #
     # @param self the object pointer
+    # @param type the animation style (vertical, horizontal, etc)
     # @param file the sprite's image filename
     # @param speed the sprite's speed movement
     # @param pos the sprite's initial position
