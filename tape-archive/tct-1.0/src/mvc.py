@@ -193,7 +193,7 @@ class BusyWaitingController:
         if isinstance(event, QuitEvent):
             self.keep_going = False
 
-# testing class that creates a GUI View
+# a testing class that creates a GUI View
 class MainGUIView(Base):
     ## create a new main GUI view and register it as a listener
     #
