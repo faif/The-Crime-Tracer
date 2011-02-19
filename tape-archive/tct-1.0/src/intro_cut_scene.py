@@ -31,7 +31,7 @@ try:
     from pygame.locals import *
     from os_utils import safe_exit
     from base import Base
-    from mvc import SafeExitEvent, EventManager, KeyboardController, QuitEvent
+    from mvc import SafeExitEvent, EventManager, EscapeEvent, ReturnEvent
 except ImportError as err:
     try:
         import os
@@ -68,21 +68,28 @@ class IntroCutSceneController:
         self.event_manager = manager
         self.event_manager.register_listener(self)
         self.gui_view = view
-
+        
         ## create clock and track time
         self.clock = pygame.time.Clock()
 
         ## flag to indicate if the scene is finished
         self.is_finished = False
 
+        # just to be aware that this is a member variable
+        self.time = -1
+
 
     ## run the slideshow
     #
     # @param self the object pointer
     def run(self):
+
         # perform cutscene slides main process
         for slide in self.gui_view.slides:
             evt = None
+
+            ## set the slide presence delay 
+            self.time = SLIDE_PRESENCE_DELAY
 
             # exit immediately if the user wants to
             if self.is_finished:
@@ -99,11 +106,8 @@ class IntroCutSceneController:
                 # show the next slide
                 self.gui_view.next_slide(slide)
 
-            # set the slides presence delay 
-            time = SLIDE_PRESENCE_DELAY
-
             # show the slide for some time
-            while time >= 0:
+            while self.time >= 0:
                 # delay for each time monad
                 self.clock.tick(SLIDE_MONAD_DELAY)
 
@@ -114,14 +118,12 @@ class IntroCutSceneController:
 
                 # handle keyboard keys
                 key = pygame.key.get_pressed()
-                # when user presses return key or space key
+                # the user wants to skip this slide
                 if key[K_RETURN] or key[K_SPACE]:
-                    # force to go to the next slide
-                    time = 0
-                # the user wants to skip the introduction
+                    evt = ReturnEvent()
+                # the user wants to skip the intro
                 elif key[K_ESCAPE]:
-                    time = 0
-                    self.is_finished = True
+                    evt = EscapeEvent()
                 # the user wants to exit the game
                 elif key[K_q]:
                     evt = SafeExitEvent()
@@ -131,7 +133,7 @@ class IntroCutSceneController:
                     self.event_manager.post(evt)
 
                 # decrease the time where a slide is showed
-                time -= 1
+                self.time -= 1
 
             # while the alpha of the blank slide is not zero
             while self.gui_view.alphavalue <= MAX_ALPHA:
@@ -144,7 +146,7 @@ class IntroCutSceneController:
                 # show the next slide                
                 self.gui_view.next_slide(slide)
 
-        # the scene is finished
+        # the scene is finished normally
         self.is_finished = True
 
     ## handle the related events 
@@ -152,8 +154,14 @@ class IntroCutSceneController:
     # @param self the object pointer
     # @param event the generated event
     def notify(self, event):
-        if isinstance(event, QuitEvent):
-            self.keep_going = False
+        # go to the next slide
+        if isinstance(event, ReturnEvent):
+            self.time = 0
+        # skip the intro
+        elif isinstance(event, EscapeEvent):
+            self.time = 0
+            self.is_finished = True
+        # quit the game using safe exit
         elif isinstance(event, SafeExitEvent):
             safe_exit()
 
@@ -224,9 +232,6 @@ class IntroCutScene(Base):
     # @param slides the list of slides images
     def __init__(self, slides):
         self.event_manager = EventManager()
-        # TODO use the keyboard controller instead of reimplementing
-        # the keyboard functionality inside the cut scene controller
-        # self.keyboard_controller = KeyboardController(self.event_manager) 
         self.gui_view = IntroCutSceneGUIView(self.event_manager, slides)
         self.controller = IntroCutSceneController(self.event_manager, self.gui_view)
 
