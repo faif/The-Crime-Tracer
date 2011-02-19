@@ -81,6 +81,28 @@ class QuitEvent(Event):
     def __init__(self):
         self.name = 'Program Quit Event'
 
+## class of escape-related events
+#
+# An escape event can be used for skipping a whole section, for
+# example an introductory section of the game.
+class EscapeEvent(Event):
+    ## create a new escape event
+    #
+    # @param self the object pointer
+    def __init__(self):
+        self.name = 'Escape Event'
+
+## class of return-related events
+#
+# A return event can be used for skipping a single item, for
+# example a slide of a slideshow.
+class ReturnEvent(Event):
+    ## create a new return event
+    #
+    # @param self the object pointer
+    def __init__(self):
+        self.name = 'Return Event'
+
 ## class of safe exit related events
 #
 # A safe exit event is generated whenever we must execute safe_exit
@@ -158,8 +180,12 @@ class KeyboardController(Base):
                 if event.type == QUIT:
                     ev = QuitEvent()
                 elif event.type == pygame.KEYDOWN:
-                    if event.key in (pygame.K_ESCAPE, pygame.K_q):
+                    if event.key == pygame.K_q:
                         ev = QuitEvent()
+                    elif event.key == pygame.K_ESCAPE:
+                        ev = EscapeEvent()
+                    elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
+                        ev = ReturnEvent()
                 if ev:
                     self.event_manager.post(ev)
                 
