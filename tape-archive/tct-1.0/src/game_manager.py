@@ -71,7 +71,10 @@ class GameManager(Base):
         ## the game scenes/levels
         self.scenes = FSM()
 
-        # initialise the level
+        # initialise a sample level
+        # TODO: find a way of applying lazy initialisation
+        # on level creation - a level should be created only
+        # right before executed
         flev = LevelFactory().create_level(
             constants.SCENES['level_one'],
             game_opts)
