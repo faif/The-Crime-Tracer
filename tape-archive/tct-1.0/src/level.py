@@ -23,7 +23,7 @@
 try:
     import constants
     from base import Base
-    from fsm import State
+    from fsm import FSM, State
     from os_utils import safe_exit
 except ImportError as err:
     try:
@@ -46,16 +46,16 @@ class LevelFactory(Base):
     #
     # @param self the object pointer
     # @param name the level's name
-    def create_level(self, name, game_opts):
+    # def create_level(self, name, game_opts):
+    def create_level(self, name):
         # find out which factory to use
         if (name == constants.SCENES['level_one']):
-            self.factory = LevelOne(game_opts)
+            self.factory = LevelOneFactory()
         else:
             raise ValueError('No such level', name)
 
         # build the actual level
         lev =  self.factory.create_level()
-        assert(lev is not None)
         # return the object instance to the game manager
         return self.factory
 
@@ -63,17 +63,27 @@ class LevelFactory(Base):
 ## one factory for each level because there might be
 ## differences (different number and type of rooms, etc)
 #
-class LevelOne(State):
+class LevelOneFactory(State):
     # part of the borg pattern
     __shared_state = {}
 
-    def __init__(self, game_opts):
+    # def __init__(self, game_opts):
+    def __init__(self):
         # part of the borg pattern
         self.__dict__ = self.__shared_state
 
         # initialize the state
         State.__init__(self, constants.SCENES['level_one'])
-        self.game_opts = game_opts
+        # self.game_opts = game_opts
+
+    def __init__(self):
+        # part of the borg pattern
+        self.__dict__ = self.__shared_state
+
+        # initialize the state
+        State.__init__(self, constants.SCENES['level_one'])
+        # the 1st level states
+        self.states = FSM()
 
     # rooms, doors, obstacles, etc.
     def create_level(self):
@@ -96,7 +106,7 @@ class LevelOne(State):
         print('exiting...')
         safe_exit()
 
-## not necessary but makes inheritance more clear
+## not necessary but makes the structure more clear
 #
 class MapSite: pass
 
@@ -104,12 +114,34 @@ class Room(MapSite):
     def __init__(self, name):
         self.name = name
 
+    def __str__(self):
+        return self.name
+
     def enter(self):
-        print('entering a room')
+        print('entering', str(self))
 
 class Door(MapSite):
     def __init__(self, colour):
         self.colour = colour
+        self.open = False
 
-    def enter(self):
-        print('entering a door')
+    def open(self):
+        print('opening door')
+
+class Item(MapSite):
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+    def pick(self):
+        print('picking', str(self))
+
+
+# test the script if executed
+if __name__ == '__main__':
+    import sys
+    print((' '.join(('Testing', sys.argv[0]))))
+    flev = LevelFactory().create_level(constants.SCENES['level_one'])
+    print((' '.join(('Testing', str(flev)))))
