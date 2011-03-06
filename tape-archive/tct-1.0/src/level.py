@@ -56,6 +56,7 @@ class LevelFactory(Base):
 
         # build the actual level
         lev =  self.factory.create_level()
+
         # return the object instance to the game manager
         return self.factory
 
@@ -74,24 +75,31 @@ class LevelOneFactory(State):
 
         # initialize the state
         State.__init__(self, constants.SCENES['level_one'])
-        # self.game_opts = game_opts
-
-    def __init__(self):
-        # part of the borg pattern
-        self.__dict__ = self.__shared_state
-
-        # initialize the state
-        State.__init__(self, constants.SCENES['level_one'])
         # the 1st level states
         self.states = FSM()
+        # self.game_opts = game_opts
+        self.states.active_state = None
 
     # rooms, doors, obstacles, etc.
     def create_level(self):
         print('creating level 1')
+
+        # set and group the rooms
         r1 = self.create_room('office')
         r2 = self.create_room('park')
-        lev = (r1, r2)
-        return lev
+        level = (r1, r2)
+
+        # add the rooms to the state machine
+        for r in level:
+            self.states.add_state(r)
+
+        # enable the default state
+        self.states.active_state = level[0]
+
+        return self.states
+
+    def run(self):
+        self.states.run()
         
     def create_room(self, name):
         return Room(name)
@@ -103,16 +111,20 @@ class LevelOneFactory(State):
     #
     # @param self the object pointer
     def do_actions(self):
-        print('exiting...')
         safe_exit()
 
-## not necessary but makes the structure more clear
-#
+
 class MapSite: pass
 
-class Room(MapSite):
+class Room(State):
     def __init__(self, name):
         self.name = name
+
+        # initialize the state
+        State.__init__(self, self.name)
+
+    def do_actions(self):
+        print('Your are in the', str(self))
 
     def __str__(self):
         return self.name
@@ -145,3 +157,4 @@ if __name__ == '__main__':
     print((' '.join(('Testing', sys.argv[0]))))
     flev = LevelFactory().create_level(constants.SCENES['level_one'])
     print((' '.join(('Testing', str(flev)))))
+    flev.run()
