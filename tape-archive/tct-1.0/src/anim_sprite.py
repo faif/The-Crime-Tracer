@@ -52,7 +52,6 @@ VERT_ANIM, HORIZ_ANIM = \
 
 MAX_SPEED = 220.0
 MIN_SPEED = 100.0
-MIN_POS = [0, 0]
 
 class SpriteFactory(Base):
     '''The "right" way to create a new sprite (exposed interface).'''
@@ -72,14 +71,14 @@ class SpriteFactory(Base):
         Return: SSprite if everything is fine, None otherwise.
         '''
         if speed < MIN_SPEED or speed > MAX_SPEED:
-            raise ValueError('Incorrect speed value', speed)
+            raise SpriteSpeedError('Incorrect sprite speed value', speed)
 
         if (type == VERT_ANIM):
             return VertAnimSprite(file, pos, speed)
         elif (type == HORIZ_ANIM):
             return HorAnimSprite(file, pos, speed)
         else:
-            raise ValueError('Incorrect sprite type', type)
+            raise SpriteTypeError('Incorrect sprite type', type)
 
 
 class SSprite(pygame.sprite.Sprite):
@@ -202,3 +201,9 @@ class HorAnimSprite(AnimSprite):
             self.rect.left = self.area.left - self.area.right
             self.rect.top = randint(self.area.top + self.limit,
                                     self.area.bottom - self.limit)
+
+class SpriteSpeedError(ValueError):
+    '''Raised when a non-acceptable sprite speed is set.'''
+
+class SpriteTypeError(ValueError):
+    '''Raised when a non-acceptable sprite type is set.'''

@@ -13,7 +13,7 @@ except ImportError as err:
         print((': '.join(("couldn't load module", str(err)))))
     exit(2)
 
-# code required to make the script work
+# code required to make the test work
 pygame.init()
 pygame.display.set_mode(
     (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), 0)
@@ -24,7 +24,7 @@ class BadInput(unittest.TestCase):
 
     def test_min_speed(self):
         '''create_anim_sprite should fail with speed values < min. acceptable'''
-        self.assertRaises(ValueError, 
+        self.assertRaises(anim_sprite.SpriteSpeedError, 
                           sprite_fact.create_anim_sprite, 
                           anim_sprite.VERT_ANIM,
                           constants.FILES['graphics']['menu']['share']['anim'][0],
@@ -32,7 +32,7 @@ class BadInput(unittest.TestCase):
 
     def test_max_speed(self):
         '''create_anim_sprite should fail with speed values > max. acceptable'''
-        self.assertRaises(ValueError, 
+        self.assertRaises(anim_sprite.SpriteSpeedError, 
                           sprite_fact.create_anim_sprite, 
                           anim_sprite.VERT_ANIM,
                           constants.FILES['graphics']['menu']['share']['anim'][0],
