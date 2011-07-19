@@ -22,8 +22,7 @@
 
 '''Linear Sprite Animation Utils.
 
-This module contains some classes which
-provide linear sprite animation motion.
+This module provides support for linear sprite animation.
 '''
 
 try:
@@ -32,14 +31,14 @@ try:
     import pygame.sprite
     from graphics import load_image
     from base import Base
-    import constants 
+    import constants
 except ImportError as err:
     try:
         import os
         path = os.path.basename(__file__)
-        print((': '.join((path, str(err)))))
+        print(("{0}: {1}".format(path, err)))
     except ImportError:
-        print((': '.join(("couldn't load module", str(err)))))
+        print(("Couldn't load module: {0}".format(err)))
     exit(2)
 
 # TODO: leave only SpriteFactory (the rest are temporary for
@@ -71,14 +70,14 @@ class SpriteFactory(Base):
         Return: SSprite if everything is fine, None otherwise.
         '''
         if speed < MIN_SPEED or speed > MAX_SPEED:
-            raise SpriteSpeedError('Incorrect sprite speed value', speed)
+            raise SpriteSpeedError("Incorrect sprite speed value: {0}".format(speed))
 
         if (type == VERT_ANIM):
             return VertAnimSprite(file, pos, speed)
         elif (type == HORIZ_ANIM):
             return HorAnimSprite(file, pos, speed)
         else:
-            raise SpriteTypeError('Incorrect sprite type', type)
+            raise SpriteTypeError("Incorrect sprite type: {0}".format(type))
 
 
 class SSprite(pygame.sprite.Sprite):
@@ -109,10 +108,7 @@ class AnimSprite(SSprite):
         speed -- the sprite's speed movement
         '''
         SSprite.__init__(self, image, init_pos)
-
-        # set up a random seed based on microseconds
         seed(datetime.now().microsecond)
-
         self.speed = speed
 
         # restrict the sprite's motion within the screen
