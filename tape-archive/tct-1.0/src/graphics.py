@@ -67,7 +67,9 @@ def load_image(filename, colorkey=IMAGE_COLORKEY):
     try:
         image = pygame.image.load(fullname)
     except:
-        print((' '.join(("Couldn't load image:", fullname))))
+        import os
+        path = os.path.basename(__file__)
+        print((': '.join((path, "couldn't load image", fullname))))
         raise SystemExit
 
     # check the current alpha value of the surface
@@ -99,7 +101,9 @@ def load_font(filename, size=FONT_SIZE):
     try:
         font = pygame.font.Font(fullname, size)
     except:
-        print((' '.join(("Couldn't load font:", fullname))))
+        import os
+        path = os.path.basename(__file__)
+        print((': '.join((path, "couldn't load font", fullname))))
         raise SystemExit
 
     return font
