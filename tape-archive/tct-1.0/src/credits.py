@@ -33,7 +33,6 @@ try:
     from sound_mixer import load_sound, play_sound
     from graphics import load_image, load_font
     from utils import get_time_sec
-    from os_utils import fopen
 except ImportError as err:
     try:
         import os
@@ -180,60 +179,58 @@ class Credits(Base):
         ## for the eye to be the same as the scroll speed
         self.background_speed = self.scroll_speed
 
-        # ensure that the file can be opened without problems
-        fin = fopen(textfile)
+        with open(textfile) as fin:
+            # parse each line, interpreter markup tokens, create text items
+            for line in fin:
 
-        # parse each line, interpreter markup tokens, create text items
-        for line in fin:
+                # strip all white characters from right and left
+                line = line.strip()
 
-            # strip all white characters from right and left
-            line = line.strip()
+                # ignore lines having as first non
+                # white character the comment one
+                if line.startswith(CREDITS_COMMENT_TOKEN):
+                    # go to the next line
+                    continue
 
-            # ignore lines having as first non
-            # white character the comment one
-            if line.startswith(CREDITS_COMMENT_TOKEN):
-                # go to the next line
-                continue
+                # interpret main authors token tags
+                for token_tag in AUTH_TAGS:
+                    # check if the author token tag exists in the line
+                    if token_tag in line:
+                        # replace the username with the real name
+                        line = line.replace(token_tag, AUTH_TAGS[token_tag])
+                        # we accept only one author token tag on each line
+                        break
 
-            # interpret main authors token tags
-            for token_tag in AUTH_TAGS:
-                # check if the author token tag exists in the line
-                if token_tag in line:
-                    # replace the username with the real name
-                    line = line.replace(token_tag, AUTH_TAGS[token_tag])
-                    # we accept only one author token tag on each line
-                    break
+                # interpret font sizes token tags and create text items
+                for token_tag in SIZE_TAGS:
+                    # check if the font size token tag exists in the line
+                    if token_tag in line:
+                        # remove the font size token tag
+                        line = line.replace(token_tag, "")
 
-            # interpret font sizes token tags and create text items
-            for token_tag in SIZE_TAGS:
-                # check if the font size token tag exists in the line
-                if token_tag in line:
-                    # remove the font size token tag
-                    line = line.replace(token_tag, "")
+                        # create the appropriate rendered text item
+                        newtext = TextItem(self,
+                                           self.screen,
+                                           line,
+                                           self.height,
+                                           SIZE_TAGS[token_tag][0],
+                                           SIZE_TAGS[token_tag][1])
 
-                    # create the appropriate rendered text item
-                    newtext = TextItem(self,
-                                       self.screen,
-                                       line,
-                                       self.height,
-                                       SIZE_TAGS[token_tag][0],
-                                       SIZE_TAGS[token_tag][1])
+                        # we accept only one font size token tag per line
+                        break
+                    # if the line has no markup token tag render text as default
+                    else:
+                        # create the default rendered text item
+                        newtext = TextItem(self, self.screen, line, self.height)
 
-                    # we accept only one font size token tag per line
-                    break
-            # if the line has no markup token tag render text as default
-            else:
-                # create the default rendered text item
-                newtext = TextItem(self, self.screen, line, self.height)
+                # add text item to the list
+                self.text_items.append(newtext)
 
-            # add text item to the list
-            self.text_items.append(newtext)
+                # the linespace between lines
+                # should be the max font size
+                self.height += LINESPACE
 
-            # the linespace between lines
-            # should be the max font size
-            self.height += LINESPACE
-
-        ## create clock and track time
+        # create clock and track time
         self.clock = pygame.time.Clock()
 
 
