@@ -1,0 +1,78 @@
+##
+#
+#    Game's Credits Screen Text Content.
+#		
+#    This file is part of The Crime Tracer.
+#
+#    Copyright (C) 2009-11 Free Software Gaming Geeks <fsgamedev@googlegroups.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+##
+#
+#    Content Format Notes:
+#      * lines having as first non white character `#' are ignored
+#
+#      * font size tags: [XL], [LARGE], [MEDIUM], [SMALL]
+#        - use only one font size tag on each line
+#
+#      * main authors tags: [FAIF], [LAFS]
+#        - use only one author tag on each line
+#
+##
+[XL]The Crime Tracer
+[MEDIUM]The suspect passer-by
+
+
+[LARGE]Concept, Project Leaders
+[LARGE]&
+[LARGE]Lead Programmers
+[SMALL][LAFS]
+[SMALL][FAIF]
+
+[LARGE]Level Design
+[SMALL][LAFS]
+[SMALL][FAIF]
+
+[LARGE]Graphics
+[SMALL][LAFS]
+[SMALL][FAIF]
+[SMALL]Nikolaos Delis
+[SMALL]Dimitris Ventas
+
+[LARGE]Character Design & Animation
+[SMALL][LAFS]
+[SMALL][FAIF]
+
+[LARGE]Music & Sound Design
+[SMALL][LAFS]
+[SMALL][FAIF]
+[SMALL]Mihalis Kasampalis
+
+[LARGE]Testing Process
+[SMALL][LAFS]
+[SMALL][FAIF]
+
+[LARGE]Special Thanks
+[SMALL]The PyGame Community
+
+
+
+
+
+
+
+[LARGE]Free Software Gaming Geeks
+[SMALL]Thanks for playing!
+
