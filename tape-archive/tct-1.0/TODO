@@ -22,9 +22,13 @@ Todo:
     character). Other are too abstract and perhaps not 
     necessary (for example character's strengh and mood)
 
+  * Use docstrings instead of doxygen, since they can be
+    used for providing online documentation (for example
+    through the interactive shell)
+
 Questions that need discussion
 
-  * I18N for messages? 
+  * I18N for messages?
 
   * Some methods are very long (refactor)?
 

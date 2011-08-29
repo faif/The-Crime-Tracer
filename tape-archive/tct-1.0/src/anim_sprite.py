@@ -20,137 +20,136 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## @package anim_sprite
-#  Game's Linear Sprite Animation Utils.
-#
-# This module contains some classes which
-# provide linear sprite animation motion.
+'''Linear Sprite Animation Utils.
+
+This module provides support for linear sprite animation.
+'''
 
 try:
-    import constants, pygame.sprite
     from random import seed, randint
     from datetime import datetime
+    import pygame.sprite
     from graphics import load_image
     from base import Base
+    import constants
 except ImportError as err:
     try:
         import os
         path = os.path.basename(__file__)
-        print((': '.join((path, str(err)))))
-    # importing os failed, print a custom message...
+        print(("{0}: {1}".format(path, err)))
     except ImportError:
-        print((': '.join(("couldn't load module", str(err)))))
+        print(("Couldn't load module: {0}".format(err)))
     exit(2)
 
-## objects imported when `from <module> import *' is used
-__all__ = ['SpriteFactory']
+# TODO: leave only SpriteFactory (the rest are temporary for
+# demonstrating docstrings)
+__all__ = ['SpriteFactory', 'SSprite', 'AnimSprite', 
+           'VertAnimSprite', 'HorAnimSprite']
 
-## enum-like constants
-VERTICAL_ANIMATION, HORIZONTAL_ANIMATION = \
+VERT_ANIM, HORIZ_ANIM = \
     list(range(len(constants.FILES['graphics']['menu']['share']['anim'])))
 
-## the "right" way to create a new sprite (exposed interface)
-#
-class SpriteFactory(Base):
+MAX_SPEED = 220.0
+MIN_SPEED = 100.0
 
-    ## create a new animated sprite at an optional given position
-    #
-    # @param self the object pointer
-    # @param type the animation style (vertical, horizontal, etc)
-    # @param file the sprite's image filename
-    # @param speed the sprite's speed movement
-    # @param pos the sprite's initial position
-    # @return the requested sprite instance
-    # @throw ValueError if the requested sprite type is wrong
+class SpriteFactory(Base):
+    '''The "right" way to create a new sprite (exposed interface).'''
+
     def create_anim_sprite(self, type, file, speed, pos=[0, 0]):
-        if (type == VERTICAL_ANIMATION):
+        '''Create a new animated sprite at an optional given position.
+
+        Arguments:
+        type -- the animation style (vertical, horizontal, etc)
+        file -- the sprite's image filename
+        speed -- the sprite's speed movement
+        pos -- the sprite's initial position
+
+        Exceptions: ValueError if 1) the requested sprite type is 
+        wrong, 2) the speed value is > max. or < min. acceptable.
+
+        Return: SSprite if everything is fine, None otherwise.
+        '''
+        if speed < MIN_SPEED or speed > MAX_SPEED:
+            raise SpriteSpeedError("Incorrect sprite speed value: {0}".format(speed))
+
+        if (type == VERT_ANIM):
             return VertAnimSprite(file, pos, speed)
-        elif (type == HORIZONTAL_ANIMATION):
+        elif (type == HORIZ_ANIM):
             return HorAnimSprite(file, pos, speed)
         else:
-            raise ValueError('Incorrect sprite type', type)
+            raise SpriteTypeError("Incorrect sprite type: {0}".format(type))
 
 
-## a static sprite - the base class of all
-#
 class SSprite(pygame.sprite.Sprite):
+    '''A static sprite - the base class of all sprites.'''
 
-    ## create a new static sprite
-    #
-    # @param self the object pointer
-    # @param image the sprite's image filename
-    # @param init_pos the sprite's initial position
     def __init__(self, image, init_pos):
-        # call the base sprite constructor
+        '''Create a new static sprite.
+
+        Arguments:
+        image -- the sprite's image filename
+        init_pos -- the sprite's initial position
+        '''
         pygame.sprite.Sprite.__init__(self)
-
-        ## the sprite's image
         self.image = load_image(image)[0]
-
-        ## the sprite's rectangle structure
         self.rect = self.image.get_rect()
-
-        ## the sprite's initial position
         self.rect.topleft = init_pos
 
 
-## an animated sprite - the base class of animations
-#
 class AnimSprite(SSprite):
+    '''An animated sprite - the base class of animations.'''
 
-    ## create a new animated sprite
-    #
-    # @param self the object pointer
-    # @param image the sprite's image filename
-    # @param init_pos the sprite's initial position
-    # @param speed the sprite's speed movement
     def __init__(self, image, init_pos, speed):
-        # call the base static sprite constructor
+        '''Create a new animated sprite.
+
+        Arguments:
+        image -- the sprite's image filename
+        init_pos -- the sprite's initial position
+        speed -- the sprite's speed movement
+        '''
         SSprite.__init__(self, image, init_pos)
-
-        # set up a random seed based on microseconds
         seed(datetime.now().microsecond)
-
-        ## the sprite's speed movement
         self.speed = speed
 
-        ## restrict the sprite's motion within the screen
+        # restrict the sprite's motion within the screen
         self.area = pygame.display.get_surface().get_rect()
 
-        ## the distance moved since the last movement
+        # the distance moved since the last movement
         self.distance_moved = 0.0
 
-    ## calculate the new distance for moving the sprite
-    #
-    # @param self the object pointer
-    # @param time_pass_sec updated time since last movement in seconds
+
     def update(self, time_pass_sec):
+        '''Calculate the new distance for moving the sprite.
+
+        Arguments:
+        time_pass_sec -- updated time since the last movement in seconds
+        '''
         self.distance_moved = time_pass_sec * self.speed
 
 
-## a vertical animated sprite
-#
 class VertAnimSprite(AnimSprite):
+    '''A vertical animated sprite.'''
 
-    ## create a new vertical animated sprite
-    #
-    # @param self the object pointer
-    # @param image the sprite's image filename
-    # @param init_pos the sprite's initial position
-    # @param speed the sprite's speed movement
     def __init__(self, image, init_pos, speed):
-        # call the base animated sprite constructor
+        '''Create a new vertical animated sprite.
+        
+        Arguments:
+        image -- the sprite's image filename
+        init_pos -- the sprite's initial position
+        speed -- the sprite's speed movement
+        '''
         AnimSprite.__init__(self, image, init_pos, speed) 
 
-        ## random number constraint
+        # random number constraint
         self.limit = self.image.get_width()
 
-    ## move the sprite to a new position
-    #
-    # @param self the object pointer
-    # @param time_pass_sec updated time since last movement in seconds
+
     def update(self, time_pass_sec):
-        # call the base animated sprite update
+        '''Move the sprite to a new position.
+
+        Arguments:
+        time_pass_sec -- updated time since last movement in seconds
+        '''
         AnimSprite.update(self, time_pass_sec)
         
         # update the sprite's position
@@ -164,29 +163,29 @@ class VertAnimSprite(AnimSprite):
             self.rect.top = self.area.top - self.area.bottom
 
 
-## a horizontal animate sprite
-#
 class HorAnimSprite(AnimSprite):
+    '''A horizontal animated sprite.'''
 
-    ## create a new horizontal animated sprite
-    #
-    # @param self the object pointer
-    # @param image the sprite's image filename
-    # @param init_pos the sprite's initial position
-    # @param speed the sprite's speed movement
     def __init__(self, image, init_pos, speed):
-        # call the base animated sprite constructor
+        '''Create a new horizontal animated sprite.
+
+        Arguments:
+        image -- the sprite's image filename
+        init_pos -- the sprite's initial position
+        speed -- the sprite's speed movement
+        '''
         AnimSprite.__init__(self, image, init_pos, speed) 
 
-        ## random number constraint
+        # random number constraint
         self.limit = self.image.get_height()
 
-    ## move the sprite to a new position
-    #
-    # @param self the object pointer
-    # @param time_pass_sec updated time since last movement in seconds
+
     def update(self, time_pass_sec):
-        # call the base animated sprite update
+        '''Move the sprite to a new position.
+        
+        Arguments:
+        time_pass_sec -- updated time since last movement in seconds
+        '''
         AnimSprite.update(self, time_pass_sec)
 
         # update the sprite's position
@@ -199,7 +198,8 @@ class HorAnimSprite(AnimSprite):
             self.rect.top = randint(self.area.top + self.limit,
                                     self.area.bottom - self.limit)
 
-# test the script if executed
-if __name__ == '__main__':
-    import sys
-    print((' '.join(('Testing', sys.argv[0]))))
+class SpriteSpeedError(ValueError):
+    '''Raised when a non-acceptable sprite speed is set.'''
+
+class SpriteTypeError(ValueError):
+    '''Raised when a non-acceptable sprite type is set.'''

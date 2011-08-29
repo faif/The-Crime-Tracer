@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#    Game's Command Line Options Parser.
+#    Command Line Options Parser.
 #
 #    This file is part of The Crime Tracer.
 #
@@ -20,76 +20,40 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## @package parse_options
-#  Command Line Options Parser.
-#
-# This module contains functions which parse the command
-# line options of the game and initialize flag variables.
+'''Command Line Options Parser.
 
+This module contains functions which parse the command
+line options of the game and initialize flag variables.
+'''
 
 try:
     import constants
     from optparse import OptionParser, OptionGroup
-except ImportError as err:
-    try:
-        import os
+except Exception as err:
+        import constants, os
         path = os.path.basename(__file__)
-        print((': '.join((path, str(err)))))
-    # importing os failed, print a custom message...
-    except ImportError:
-        print((': '.join(("couldn't load module", str(err)))))
-    exit(2)
+        print('{0}: {1}'.format(path, err))
+        exit(MOD_FAIL_ERR)
 
-## objects imported when `from <module> import *' is used
 __all__ = ['get_parsed_opts']
 
-
-## show the GNU GPL license and exit normally
-#
-# @param option the option instance that's calling the callback
-# @param opt the option string seen on the command line
-# @param value the argument to this option seen on the command line
-# @param parser the OptionParser instance driving the whole thing
 def show_gnu_gpl(option, opt, value, parser):
-    # print license
     for line in constants.GAME_GPL:
         print(line)
-
-    # and exit
     exit()
 
-
-## show the authors of the game and exit normally
-#
-# @param option the option instance that's calling the callback
-# @param opt the option string seen on the command line
-# @param value the argument to this option seen on the command line
-# @param parser the OptionParser instance driving the whole thing
 def show_authors(option, opt, value, parser):
-    # print authors
     for line in constants.GAME_AUTHORS:
         print(line)
-
-    # and exit
     exit()
 
-
-## parse and return the game's command line options
-#
-# @return the game's options' flags
 def get_parsed_opts():
-    # the usage info of the game
     usage = "Usage: %prog [OPTIONS]"
 
-    # create an option parser object and pass to it basic info
     parser = OptionParser(usage=usage, version=constants.GAME_PACKAGE)
 
-    # add the options and their behavior of the game
-
-    # create info options group
     group = OptionGroup(parser, "Info Options")
 
-    # add to the group the options
     group.add_option("-a", "--author",
                      action="callback", callback=show_authors,
                      help="print the authors of the game")
@@ -102,13 +66,10 @@ def get_parsed_opts():
                      action="callback", callback=show_gnu_gpl,
                      help="works like `-c' and `--copyleft'")
 
-    # add the group to the parser
     parser.add_option_group(group)
 
-    # create game options group
     group = OptionGroup(parser, "Game Options")
 
-    # add to the group the options
     group.add_option("-f", "--fullscreen", default=False,
                      action="store_true", dest="fullscreen",
                      help="run in fullscreen mode")
@@ -121,33 +82,19 @@ def get_parsed_opts():
                      dest="sound", default=True,
                      help="disable music")
 
-    # add the group to the parser
     parser.add_option_group(group)
 
-    # create debug options group
     group = OptionGroup(parser, "Debug Options")
 
-    # add to the group the options
     group.add_option("-v", "--verbose", default=False,
                      action="store_true", dest="verbose",
                      help="explain what is being done")
 
-    # add the group to the parser
     parser.add_option_group(group)
 
-    # parse the command line options of the game
     options, arguments = parser.parse_args()
 
-    # if there are arguments terminate the game
     if arguments:
         parser.error("invalid argument")
 
-    # return the flag options to the caller
     return options
-
-
-# test the script if executed
-if __name__ == '__main__':
-    import sys
-    print((' '.join(('Testing', sys.argv[0]))))
-    get_parsed_opts()

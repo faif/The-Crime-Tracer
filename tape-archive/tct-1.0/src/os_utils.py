@@ -42,7 +42,7 @@ except ImportError as err:
     exit(2)
 
 ## objects imported when `from <module> import *' is used
-__all__ = ['file_path', 'safe_exit', 'fopen']
+__all__ = ['file_path', 'safe_exit']
 
 
 ## create the path of a file
@@ -65,17 +65,3 @@ def safe_exit():
 
     # now exit succesfully
     exit()
-
-
-## open a file with the default mode
-#
-# @param f_path the relative path of the file
-# @return the resource connected with the opened file
-# @throw IOError if the file cannot be opened
-def fopen(f_path):
-    try:
-        fin = open(f_path)
-        return fin
-    except IOError as e:
-        print(e)
-        exit(constants.FILE_ERR)
