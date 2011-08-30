@@ -20,13 +20,12 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## @package game_manager
-#  The Game Manager.
-#
-# This module contains the game manager which keeps
-# track of the active scene (i.e. intro, menu, level 1,
-# etc.), switches between scenes, etc.
+'''The Game Manager.
 
+This module contains the game manager which keeps
+track of the active scene (i.e. intro, menu, level 1,
+etc.), switches between scenes, etc.
+'''
 
 try:
     import constants
@@ -35,43 +34,31 @@ try:
     from menu import Menu
     from base import Base
     from level import LevelFactory
-except ImportError as err:
-    try:
+except Exception as err:
         import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
-        print((': '.join((path, str(err)))))
-    # importing os failed, print a custom message...
-    except ImportError:
-        print((': '.join(("couldn't load module", str(err)))))
-    exit(2)
+        print('{0}: {1}'.format(path, err))
+        exit(MOD_FAIL_ERR)
 
-## objects imported when `from <module> import *' is used
 __all__ = ['GameManager']
 
-
-## a game manager class
-#
-# The game manager is responsible for keeping
-# track of the active scene (i.e. intro, menu,
-# level 1, etc), changing between scenes, etc.
-# It's a borg since we need a shared state for
-# all instances.
 class GameManager(Base):
+    '''The game manager class is responsible for keeping
+    track of the active scene (i.e. intro, menu,
+    level 1, etc), changing between scenes, etc.
+    It's a borg since we need a shared state for
+    all instances.
+    '''
     # part of the borg pattern
     __shared_state = {}
 
-    ## initialize the game manager
-    #
-    # @param self the object pointer
-    # @param game_opts the game's command line options
     def __init__(self, game_opts):
         # part of the borg pattern
         self.__dict__ = self.__shared_state
 
-        ## the game scenes/levels
         self.scenes = FSM()
 
-        # initialise a sample level
         # TODO: find a way of applying lazy initialisation
         # on level creation - a level should be created only
         # right before executed
@@ -93,40 +80,15 @@ class GameManager(Base):
         # enable the default state
         self.scenes.active_state = scenes[0]
 
-    ## execute the appropriate scene
-    #
-    # @param self the object pointer
     def run_scene(self):
+        '''execute the appropriate scene'''
         self.scenes.run()
 
-    ## switch the active scene and start the new one
-    #
-    # @param self the object pointer
-    # @param scene the name of the new active scene
     def set_active_scene(self, scene):
+        '''switch the active scene and start the new one'''
         self.scenes.set_state(scene)
         self.run_scene()
 
-
-    ## the string representation of the game manager
-    #
-    # @param self the object pointer
-    # @return a string which shows which state is executed
     def __str__(self):
-        return ' '.join((self.__class__.__name__, 
-                        'executes',
-                        str(self.scenes.active_state)))
-
-
-# test the script if executed
-if __name__ == '__main__':
-    import sys
-    print((' '.join(('Testing', sys.argv[0]))))
-    # comment the constructor except from the 1st
-    # line and uncomment the code below to test
-    # if borg works as expected
-    # g = GameManager(None)
-    # g.x = 3
-    # g2 = GameManager(None)
-    # g2.x = 5
-    # print((g.x, g2.x))
+        return '{0} executes {1}'.format(self.__class__.__name__,
+                                         self.scenes.active_state)
