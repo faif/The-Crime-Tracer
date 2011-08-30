@@ -28,14 +28,15 @@ and then starts the game manager for the rest things.
 '''
 
 try:
-    import constants, os, sys, pygame
+    import os, sys, pygame, constants
     from parse_options import get_parsed_opts
     from graphics import load_image
     from game_manager import GameManager
     from base import Base
     from mvc import KeyboardController, EventManager
 except Exception as err:
-        import constants, os
+        import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
         print('{0}: {1}'.format(path, err))
         exit(MOD_FAIL_ERR)

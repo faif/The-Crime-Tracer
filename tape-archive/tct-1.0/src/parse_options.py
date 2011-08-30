@@ -23,75 +23,65 @@
 '''Command Line Options Parser.
 
 This module contains functions which parse the command
-line options of the game and initialize flag variables.
+line options of the game and initialize the flag variables.
 '''
 
 try:
     import constants
     from optparse import OptionParser, OptionGroup
 except Exception as err:
-        import constants, os
+        import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
         print('{0}: {1}'.format(path, err))
         exit(MOD_FAIL_ERR)
 
 __all__ = ['get_parsed_opts']
 
-def show_gnu_gpl(option, opt, value, parser):
+def show_gnu_gpl(_, dummy1, dummy2, dummy3):
     for line in constants.GAME_GPL:
         print(line)
     exit()
 
-def show_authors(option, opt, value, parser):
+def show_authors(_, dummy1, dummy2, dummy3):
     for line in constants.GAME_AUTHORS:
         print(line)
     exit()
 
 def get_parsed_opts():
     usage = "Usage: %prog [OPTIONS]"
-
     parser = OptionParser(usage=usage, version=constants.GAME_PACKAGE)
 
     group = OptionGroup(parser, "Info Options")
-
     group.add_option("-a", "--author",
                      action="callback", callback=show_authors,
                      help="print the authors of the game")
-
     group.add_option("-c", "--copyleft",
                      action="callback", callback=show_gnu_gpl,
                      help="print the short version of GNU GPL")
-
     group.add_option("-l", "--license",
                      action="callback", callback=show_gnu_gpl,
                      help="works like `-c' and `--copyleft'")
 
     parser.add_option_group(group)
-
     group = OptionGroup(parser, "Game Options")
-
     group.add_option("-f", "--fullscreen", default=False,
                      action="store_true", dest="fullscreen",
                      help="run in fullscreen mode")
-
     group.add_option("--nomusic", default=True,
                      dest="music", action="store_false",
                      help="disable sounds")
-
     group.add_option("--nosound", action="store_false",
                      dest="sound", default=True,
                      help="disable music")
 
     parser.add_option_group(group)
-
     group = OptionGroup(parser, "Debug Options")
-
     group.add_option("-v", "--verbose", default=False,
                      action="store_true", dest="verbose",
                      help="explain what is being done")
 
     parser.add_option_group(group)
-
     options, arguments = parser.parse_args()
 
     if arguments:
