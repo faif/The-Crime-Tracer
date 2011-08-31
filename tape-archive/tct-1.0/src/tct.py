@@ -28,15 +28,15 @@ and then starts the game manager for the rest things.
 '''
 
 try:
-    import constants, os, sys, pygame
+    import os, sys, pygame, constants
     from parse_options import get_parsed_opts
-
     from graphics import load_image
     from game_manager import GameManager
     from base import Base
     from mvc import KeyboardController, EventManager
 except Exception as err:
-        import constants, os
+        import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
         print('{0}: {1}'.format(path, err))
         exit(MOD_FAIL_ERR)
@@ -109,7 +109,6 @@ class MainGUIView(Base):
         self.event_manager = manager
         self.event_manager.register_listener(self)
         self.game_opts = game_opts
-
         GAME_WINDOW_TITLE = constants.GAME_PACKAGE
 
         # make the window of the game always centered
@@ -120,14 +119,11 @@ class MainGUIView(Base):
         pygame.display.set_mode(
             (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT),
             pygame.FULLSCREEN if self.game_opts.fullscreen else 0)
-
         pygame.display.set_caption(GAME_WINDOW_TITLE)
-
         pygame.display.set_icon(load_image(
                 constants.FILES['graphics']['window']['icon'][0])[0])
 
         pygame.mouse.set_visible(False)
-
 
     def notify(self, event):
         '''Handle the related events.'''

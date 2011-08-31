@@ -21,16 +21,16 @@
 
 '''Graphics Utilities.
 
-This module contains the game's graphics
-utilities, loading graphics, fonts, etc.
+This module contains graphics utilities for loading graphics, fonts, etc.
 '''
 
 try:
-    import constants, pygame
+    import pygame, constants
     from pygame.locals import RLEACCEL
     from os_utils import file_path
 except Exception as err:
-        import constants, os
+        import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
         print('{0}: {1}'.format(path, err))
         exit(MOD_FAIL_ERR)
