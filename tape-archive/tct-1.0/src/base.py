@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#    Generic object-oriented utilities.
+#    Generic Python functions.
 #
 #    This file is part of The Crime Tracer.
 #
@@ -19,41 +19,23 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+'''Generic Python functions.
 
-## @package base
-#  Generic object-oriented utilities.
-#
-# This module contains object-oriented stuff that are generic enough
-# to be useful in more than one (sub)classes. 
+This module contains functions that are generic enough to be useful in more 
+than one (sub)classes. 
+'''
 
-## objects imported when `from <module> import *' is used
 __all__ = ['Base']
 
-
-## a base class
-#
 class Base(object):
 
-    ## print all the attributes of an object
-    #
-    # @param self the object pointer
     def print_attrs(self):
+        '''Print all the attributes of an object.'''
         for attr in self.__dict__:
             print(attr, getattr(self, attr))
 
-    ## find in which class the method of a
-    ## specific instance belongs
-    #
-    # @param self the object pointer
-    # @param method the method's name as a plain string
     def find_class(self, method):
+        '''find in which class the method of a specific instance belongs.'''
         for ty in type(self).mro():
             if method in ty.__dict__:
                 return ty
-
-# test the script if executed
-if __name__ == '__main__':
-    import sys
-    print((' '.join(('Testing', sys.argv[0]))))
-    b = Base()
-    print(b.find_class('print_attrs'))
