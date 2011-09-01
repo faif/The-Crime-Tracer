@@ -34,7 +34,7 @@ try:
     from menu import Menu
     from base import Base
     from level import LevelFactory
-except Exception as err:
+except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)

@@ -28,7 +28,7 @@ try:
     import pygame, constants
     from pygame.locals import RLEACCEL
     from os_utils import file_path
-except Exception as err:
+except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)

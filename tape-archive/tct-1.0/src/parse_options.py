@@ -29,7 +29,7 @@ line options of the game and initialize the flag variables.
 try:
     import constants
     from optparse import OptionParser, OptionGroup
-except Exception as err:
+except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)

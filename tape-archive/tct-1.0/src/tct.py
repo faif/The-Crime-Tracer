@@ -34,7 +34,7 @@ try:
     from game_manager import GameManager
     from base import Base
     from mvc import KeyboardController, EventManager
-except Exception as err:
+except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
