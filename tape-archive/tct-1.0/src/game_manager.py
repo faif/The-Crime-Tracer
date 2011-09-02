@@ -45,11 +45,10 @@ __all__ = ['GameManager']
 
 class GameManager(Base):
     '''The game manager class is responsible for keeping
-    track of the active scene (i.e. intro, menu,
-    level 1, etc), changing between scenes, etc.
-    It's a borg since we need a shared state for
-    all instances.
-    '''
+    track of the active scene (i.e. intro, menu, level 1, 
+    etc), changing between scenes, etc. It's a borg since 
+    we need a shared state for all instances.'''
+
     # part of the borg pattern
     __shared_state = {}
 

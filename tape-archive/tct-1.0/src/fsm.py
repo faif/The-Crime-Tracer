@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#    Game's Finite State Machine.
+#    Finite State Machine.
 #
 #    This file is part of The Crime Tracer.
 #
@@ -20,107 +20,66 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## @package fsm
-#  Game's Finite State Machine.
-#
-# This module contains the implementation
-# of the finite state machine of the game.
+'''Finite State Machine.
+
+This module contains the implementation
+of the finite state machine of the game.
+'''
 
 try:
     import constants
     from base import Base
-except ImportError as err:
-    try:
+except (RuntimeError, ImportError) as err:
         import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
-        print((': '.join((path, str(err)))))
-    # importing os failed, print a custom message...
-    except ImportError:
-        print((': '.join(("couldn't load module", str(err)))))
-    exit(2)
+        print('{0}: {1}'.format(path, err))
+        exit(MOD_FAIL_ERR)
 
-## objects imported when `from <module> import *' is used
 __all__ = ['State', 'FSM']
 
-
-## class of a template state
-#
-# This class is the template of an FSM's state.
-# It can be used by several FSM implementations.
 class State(Base):
+    '''This class is the template of an FSM's state.
+    It can be used by several FSM implementations.'''
 
-    ## create a new state
-    #
-    # @param self the object pointer
-    # @param name the state's name
     def __init__(self, name):
-        ## the name of the state
+        # TODO unit test instead of assertion
         assert(name is not '')
         self.name = name
 
-    ## what to do when the state is enabled
-    #
-    # @param self the object pointer
     def do_actions(self):
-        pass
+        '''what to do when the state is enabled'''
 
-    ## what should be satisfied for enabling the state
-    #
-    # @param self the object pointer
     def check_conditions(self):
-        pass
+        '''what should be satisfied for enabling the state'''
 
-    ## what to do before enabling the state
-    #
-    # @param self the object pointer
     def entry_actions(self):
+        '''what to do before enabling the state'''
         pass
 
-    ## what to do after disabling the state
-    #
-    # @param self the object pointer
     def exit_actions(self):
-        pass
+        '''what to do after disabling the state'''
 
-    ## the string representation of the state
-    #
-    # @param self the object pointer
-    # @return the state's name as a plain string
     def __str__(self):
         return self.name
 
-
-## class of an FSM manager
-#
-# This class is the skeleton of an FSM.
 class FSM(Base):
+    '''this class is the skeleton of an FSM'''
 
-    ## initialize the FSM
-    #
-    # @param self the object pointer
     def __init__(self):
-
-        ## dictionary of states
         self.states = dict()
-
-        ## the active state
         self.active_state = None
 
-    ## add a new state 
-    #
-    # @param self the object pointer    
-    # @param state a state instance
     def add_state(self, state):
         self.states[state.name] = state
 
-    ## perform the active's state's actions and
-    ## then check whether it should be altered
-    #
-    # @param self the object pointer    
     def run(self):
-        if self.active_state is None:
+        '''perform the active's state's actions and
+        then check whether it should be altered'''
+
+        if not self.active_state:
             return
-        
+
         self.active_state.do_actions()
 
         new_state_name = self.active_state.check_conditions()
@@ -128,15 +87,14 @@ class FSM(Base):
         if new_state_name:
             self.set_state(new_state_name)
 
-    ## switch to a new active state
-    #
-    # @param self the object pointer
-    # @param new_state_name the name of the new active state
     def set_state(self, new_state_name):
+        '''switch to a new active state'''
+
         if self.active_state:
             self.active_state.exit_actions()
 
         # make sure that the given state exists
+        # TODO unit test instead of assertion
         assert (new_state_name in self.states)
 
         self.active_state = self.states[new_state_name]

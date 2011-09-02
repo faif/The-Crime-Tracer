@@ -30,12 +30,12 @@ __all__ = ['Base']
 class Base(object):
 
     def print_attrs(self):
-        '''Print all the attributes of an object.'''
+        '''print all the attributes of an object'''
         for attr in self.__dict__:
             print(attr, getattr(self, attr))
 
     def find_class(self, method):
-        '''find in which class the method of a specific instance belongs.'''
+        '''find in which class the method of a specific instance belongs'''
         for ty in type(self).mro():
             if method in ty.__dict__:
                 return ty
