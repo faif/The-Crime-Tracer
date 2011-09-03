@@ -2,7 +2,6 @@ try:
     import random
     import pygame
     import graphics
-    import constants
 
     from sprite_engine import *
 except (RuntimeError, ImportError) as error:
@@ -77,7 +76,7 @@ def main():
                 changable2.setLayer(random.choice(group.layers()))
                 changable1.setAngle(random.randint(0, 360))
                 changable2.setSpeed(random.randint(10, 200))
-              
+
         time_passed_seconds = clock.tick() / 1000.0
 
         group.update(time_passed_seconds)
