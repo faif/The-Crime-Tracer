@@ -1,38 +1,76 @@
-import random
-import pygame
-import math
+# -*- coding: utf-8 -*-
 
-from graphics import load_image
-from vector import Vector2D
+#    Sprite Movement, Animation Utilities.
+#
+#    This file is part of The Crime Tracer.
+#
+#    Copyright (C) 2009-11 Free Software Gaming Geeks <fsgamedev@googlegroups.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-class FaultArgumentError(ValueError):
-    '''Raised when a fault argument is passed as parameter.'''
+try:
+    import random
+    import pygame
+    import math
+    import graphics
+
+    from base import Base
+    from generic_exceptions import *
+    from vector import Vector2D
+except (RuntimeError, ImportError) as error:
+    import os, constants
+    path = os.path.basename(__file__)
+    print('{0}: {1}'.format(path, error))
+    exit(constants.MOD_FAIL_ERR)
 
 
-class Hipparchus(object):
-    minDegree = 0
-    maxDegree = 360
+__all__ = [
+            'Hipparchus',
+            'Cardinal',
+            'StaticSprite',
+            'DynamicSprite',
+            'SpriteFactory'
+          ]
+
+
+class Hipparchus(Base):
+    MinimumDegree = 0
+    MaximumDegree = 360
 
     def __init__(self): pass
 
-    def getMinDegree(self):
-        return Hipparchus.minDegree
+    def getMinimumDegree(self):
+        return Hipparchus.MinimumDegree
 
-    def getMaxDegree(self):
-        return Hipparchus.maxDegree
+    def getMaximumDegree(self):
+        return Hipparchus.MaximumDegree
 
     def getRadiansByDegrees(self, degrees):
+        if isinstance(degrees, str):
+            if degrees == 'Random':
+                return random.randint(Hipparchus.MinimumDegree, Hipparchus.MaximumDegree)
+
         if isinstance(degrees, int):
-            if degrees >= Hipparchus.minDegree and degrees <= Hipparchus.maxDegree:
+            if degrees >= Hipparchus.MinimumDegree and degrees <= Hipparchus.MaximumDegree:
                 return math.radians(degrees)
 
-        raise FaultArgumentError("Incorrect Hipparchus degree: {0}".format(degrees))
+        raise FaultArgumentException("Incorrect Hipparchus Degree: {0}".format(degrees))
 
 
-
-class Cardinal(object):
-    mapping = {
+class Cardinal(Base):
+    Mapping = {
         'North': (0, -1),
         'East':  (+1, 0),
         'South': (0, +1),
@@ -46,45 +84,39 @@ class Cardinal(object):
 
     def __init__(self): pass
 
-    def getDirections(self):
-        return Cardinal.mapping.keys()
-
-    def getUnitVectors(self):
-        return Cardinal.mapping.values()
-
     def getUnitVectorByDirection(self, direction):
         if isinstance(direction, str):
-            if direction == "Random":
-                return Cardinal.mapping[random.choice(Cardinal.mapping.keys())]
-            elif Cardinal.mapping.has_key(direction):
-                return Cardinal.mapping[direction]
+            if direction == 'Random':
+                return Cardinal.Mapping[random.choice(Cardinal.Mapping.keys())]
+            elif Cardinal.Mapping.has_key(direction):
+                return Cardinal.Mapping[direction]
 
-        raise FaultArgumentError("Incorrect Cardinal direction: {0}".format(direction))
+        raise FaultArgumentException("Incorrect Cardinal Direction: {0}".format(direction))
 
     def getDirectionByUnitVector(self, vector):
         if isinstance(vector, str):
-            if vector == "Random":
-                return random.choice(Cardinal.mapping.keys())
+            if vector == 'Random':
+                return random.choice(Cardinal.Mapping.keys())
 
         if isinstance(vector, tuple) or isinstance(vector, list):
-            for key, value in Cardinal.mapping.items():
-                if list(value) == list(vector):
+            for key, value in Cardinal.Mapping.items():
+                if tuple(value) == tuple(vector):
                     return key
 
-        raise FaultArgumentError("Incorrect Cardinal unit vector: {0}".format(vector))
+        raise FaultArgumentException("Incorrect Cardinal Unit Vector: {0}".format(vector))
 
 
-class StaticSprite(pygame.sprite.Sprite):
+class StaticSprite(pygame.sprite.Sprite, Base):
     def __init__(self, image, position, layer):
         pygame.sprite.Sprite.__init__(self)
 
         self.setImage(image)
         self.setPosition(position)
         self.setLayer(layer)
-        self.centering()
+        self.arrangeRectangle()
 
     def setImage(self, image):
-        self.image = load_image(image)[0]
+        self.image = graphics.load_image(image)[0]
 
     def setPosition(self, position):
         self.position = Vector2D(position)
@@ -92,43 +124,22 @@ class StaticSprite(pygame.sprite.Sprite):
     def setLayer(self, layer):
         self._layer = layer
 
-    def setRect(self, rect):
-        self.rect = rect
+        for group in self.groups():
+            group.change_layer(self, layer)
 
-    def getImage(self):
-        return self.image
-
-    def getPosition(self):
-        return self.position
-
-    def getLayer(self):
-        return self._layer
-
-    def getRect(self):
-        return self.rect
-
-    def centering(self):
-        self.rect = self.image.get_rect(center=list(self.position))
+    def arrangeRectangle(self):
+        self.rect = self.image.get_rect(center=tuple(self.position))
 
 
 class DynamicSprite(StaticSprite):
     def __init__(self, image, position, layer, speed):
         StaticSprite.__init__(self, image, position, layer)
 
-        self.setDistance(0.0)
+        self.distance = 0.0
         self.setSpeed(speed)
-
-    def setDistance(self, distance):
-        self.distance = distance
 
     def setSpeed(self, speed):
         self.speed = speed
-
-    def getDistance(self):
-        return self.distance
-
-    def getSpeed(self):
-        return self.speed
 
     def update(self, interval):
         self.distance = interval * self.speed
@@ -136,36 +147,42 @@ class DynamicSprite(StaticSprite):
 
 class CardinalSprite(DynamicSprite):
     def __init__(self, image, position, layer, speed, direction):
-        DynamicSprite.__init__(self, image, position, layer, speed) 
+        DynamicSprite.__init__(self, image, position, layer, speed)
 
         self.setDirection(direction)
 
     def setDirection(self, direction):
         self.direction = Vector2D(Cardinal().getUnitVectorByDirection(direction))
 
-    def getDirection(self):
-        return self.direction
-
     def update(self, interval):
         DynamicSprite.update(self, interval)
 
         self.position += self.direction * self.distance
 
-        self.centering()
+        self.arrangeRectangle()
+
+
+class InsistenceSprite(CardinalSprite):
+    def __init__(self, image, position, layer, speed, direction):
+        CardinalSprite.__init__(self, image, position, layer, speed, direction)
+
+        self.original_direction = direction
+
+    def update(self, interval):
+        self.direction = Vector2D(Cardinal().getUnitVectorByDirection(self.original_direction))
+
+        CardinalSprite.update(self, interval)
 
 
 class HipparchusSprite(DynamicSprite):
     def __init__(self, image, position, layer, speed, angle):
-        DynamicSprite.__init__(self, image, position, layer, speed) 
+        DynamicSprite.__init__(self, image, position, layer, speed)
 
         self.setAngle(angle)
 
     def setAngle(self, angle):
         self.angle = Hipparchus().getRadiansByDegrees(angle)
         
-    def getAngle(self):
-        return self.angle
-
     def update(self, interval):
         DynamicSprite.update(self, interval)
 
@@ -176,48 +193,18 @@ class HipparchusSprite(DynamicSprite):
 
         self.position += vector * self.distance
 
-        self.centering()
+        self.arrangeRectangle()
 
 
-def main():
-    pygame.init()
+class SpriteFactory(Base):
+    Sprites = {
+        'Cardinal': CardinalSprite,
+        'Insistence': InsistenceSprite,
+        'Hipparchus': HipparchusSprite
+    }
 
-    screen = pygame.display.set_mode((800, 600))
-
-    background = load_image("sprite/background.jpg")[0]
-
-    sprites = []
-
-    sprites.append(StaticSprite("sprite/sprite-1.png", (screen.get_rect().center), 10))
-    sprites.append(HipparchusSprite("sprite/sprite-2.png", (screen.get_rect().center), 9, 80, 60))
-    sprites.append(CardinalSprite("sprite/sprite-3.png", (screen.get_rect().center), 8, 40, 'East'))
-    sprites.append(CardinalSprite("sprite/sprite-4.png", (screen.get_rect().center), 7, 40, 'South'))
-    sprites.append(CardinalSprite("sprite/sprite-5.png", (screen.get_rect().center), 6, 40, 'West'))
-    sprites.append(CardinalSprite("sprite/sprite-6.png", (screen.get_rect().center), 5, 40, 'North'))
-    sprites.append(CardinalSprite("sprite/sprite-7.png", (screen.get_rect().center), 4, 40, 'SouthEast'))
-    sprites.append(CardinalSprite("sprite/sprite-8.png", (screen.get_rect().center), 3, 40, 'SouthWest'))
-    sprites.append(CardinalSprite("sprite/sprite-9.png", (screen.get_rect().center), 2, 40, 'NorthWest'))
-    sprites.append(CardinalSprite("sprite/sprite-1.png", (screen.get_rect().center), 1, 40, 'NorthEast'))
-    sprites.append(CardinalSprite("sprite/sprite-2.png", (screen.get_rect().center), 0, 80, 'Random'))
-
-    group = pygame.sprite.LayeredUpdates((sprites))
-
-    screen.blit(background, (0, 0))
-    pygame.display.update()
-
-    clock = pygame.time.Clock()
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                exit()
-
-        time_passed_seconds = clock.tick() / 1000.0
-
-        group.update(time_passed_seconds)
-        group.clear(screen, background)
-        changes = group.draw(screen)
-        pygame.display.update(changes)
-
-
-if __name__ == '__main__': main()
+    def getSprite(self, type, image, position, layer, speed, direction):
+        if SpriteFactory.Sprites.has_key(type):
+            return SpriteFactory.Sprites[type](image, position, layer, speed, direction)
+        else:
+            raise FaultArgumentException("Incorrect Sprite Type: {0}".format(type))
