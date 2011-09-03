@@ -37,36 +37,129 @@ except (RuntimeError, ImportError) as error:
 
 
 __all__ = [
-            'Hipparchus',
-            'Cardinal',
             'StaticSprite',
             'DynamicSprite',
             'SpriteFactory'
           ]
 
 
-class Hipparchus(Base):
-    MinimumDegree = 0
-    MaximumDegree = 360
+class MinimumMaximum(Base):
+   def __init__(self, minimum, maximum):
+       if type(minimum) != type(maximum):
+           raise FaultArgumentException("Minimum ({0}) is different than Maximum ({1})".format(type(minimum), type(maximum)))
 
-    def __init__(self): pass
+       if minimum > maximum:
+           raise FaultArgumentException("Minimum ({0}) must be less than Maximum ({1})".format(minimum, maximum))
 
-    def getMinimumDegree(self):
-        return Hipparchus.MinimumDegree
+       self.minimum = minimum
+       self.maximum = maximum
 
-    def getMaximumDegree(self):
-        return Hipparchus.MaximumDegree
+   def getMinimum(self):
+       return self.minimum
 
-    def getRadiansByDegrees(self, degrees):
-        if isinstance(degrees, str):
-            if degrees == 'Random':
-                return random.randint(Hipparchus.MinimumDegree, Hipparchus.MaximumDegree)
+   def getMaximum(self):
+       return self.maximum
 
-        if isinstance(degrees, int):
-            if degrees >= Hipparchus.MinimumDegree and degrees <= Hipparchus.MaximumDegree:
-                return math.radians(degrees)
 
-        raise FaultArgumentException("Incorrect Hipparchus Degree: {0}".format(degrees))
+class ValueLimitator(MinimumMaximum):
+    def __init__(self, minimum, maximum):
+        MinimumMaximum.__init__(self, minimum, maximum)
+
+    def getValue(self, value):
+        if value >= self.getMinimum() and value <= self.getMaximum():
+            return value
+
+        raise FaultArgumentException("Value ({0}) is out of range: [{1}, {2}]".format(value, self.getMinimum(), self.getMaximum()))
+
+
+class IntegerLimitator(ValueLimitator):
+    def __init__(self, minimum, maximum):
+        ValueLimitator.__init__(self, minimum, maximum)
+
+    def getValue (self, value):
+        if isinstance(value, int):
+            return ValueLimitator.getValue(self, value)
+
+        if isinstance(value, str):
+            if value == 'Random':
+                return random.randint(self.getMinimum(), self.getMaximum())
+
+        raise FaultArgumentException("Incorrect integer value: {0}".format(value))
+
+
+class FloatLimitator(ValueLimitator):
+    def __init__(self, minimum, maximum):
+        ValueLimitator.__init__(self, minimum, maximum)
+
+    def getValue (self, value):
+        if isinstance(value, float):
+            return ValueLimitator.getValue(self, value)
+
+        if isinstance(value, str):
+            if value == 'Random':
+                return random.uniform(self.getMinimum(), self.getMaximum())
+
+        raise FaultArgumentException("Incorrect float value: {0}".format(value))
+
+
+class LimitatorFactory(Base):
+    Limitators = {
+        'Integer': IntegerLimitator,
+        'Float': FloatLimitator
+    }
+
+    def getLimitator(self, type, minimum, maximum):
+        if LimitatorFactory.Limitators.has_key(type):
+            return LimitatorFactory.Limitators[type](minimum, maximum)
+        else:
+            raise FaultArgumentException("Incorrect limitator type: {0}".format(type))
+
+
+class SpriteSpeed(Base):
+    MinimumSpeed = 0
+    MaximumSpeed = 1000
+
+    def __init__(self):
+        self.limitator = LimitatorFactory().getLimitator('Float', SpriteSpeed.MinimumSpeed, SpriteSpeed.MaximumSpeed)
+
+    def getSpeed(self, speed):
+        if isinstance (speed, int):
+            speed = float (speed)
+
+        return self.limitator.getValue(speed)
+
+
+class SpriteAlpha(Base):
+    MinimumAlpha = 0
+    MaximumAlpha = 255
+
+    def __init__(self):
+        self.limitator = LimitatorFactory().getLimitator('Integer', SpriteAlpha.MinimumAlpha, SpriteAlpha.MaximumAlpha)
+
+    def getAlpha(self, alpha):
+        return self.limitator.getValue(alpha)
+
+
+class SpriteAngle(Base):
+    MinimumAngle = 0
+    MaximumAngle = 360
+
+    def __init__(self):
+        self.limitator = LimitatorFactory().getLimitator('Integer', SpriteAngle.MinimumAngle, SpriteAngle.MaximumAngle)
+
+    def getAngle(self, angle):
+        return self.limitator.getValue(angle)
+
+
+class SpriteLayer(Base):
+    MinimumLayer = 0
+    MaximumLayer = 200
+
+    def __init__(self):
+        self.limitator = LimitatorFactory().getLimitator('Integer', SpriteLayer.MinimumLayer, SpriteLayer.MaximumLayer)
+
+    def getLayer(self, layer):
+        return self.limitator.getValue(layer)
 
 
 class Cardinal(Base):
@@ -91,7 +184,7 @@ class Cardinal(Base):
             elif Cardinal.Mapping.has_key(direction):
                 return Cardinal.Mapping[direction]
 
-        raise FaultArgumentException("Incorrect Cardinal Direction: {0}".format(direction))
+        raise FaultArgumentException("Incorrect Cardinal direction: {0}".format(direction))
 
     def getDirectionByUnitVector(self, vector):
         if isinstance(vector, str):
@@ -103,16 +196,17 @@ class Cardinal(Base):
                 if tuple(value) == tuple(vector):
                     return key
 
-        raise FaultArgumentException("Incorrect Cardinal Unit Vector: {0}".format(vector))
+        raise FaultArgumentException("Incorrect Cardinal unit vector: {0}".format(vector))
 
 
 class StaticSprite(pygame.sprite.Sprite, Base):
-    def __init__(self, image, position, layer):
+    def __init__(self, image, position, layer, alpha):
         pygame.sprite.Sprite.__init__(self)
 
         self.setImage(image)
         self.setPosition(position)
         self.setLayer(layer)
+        self.setAlpha(alpha)
         self.arrangeRectangle()
 
     def setImage(self, image):
@@ -122,32 +216,37 @@ class StaticSprite(pygame.sprite.Sprite, Base):
         self.position = Vector2D(position)
 
     def setLayer(self, layer):
+        layer = SpriteLayer().getLayer(layer)
+
         self._layer = layer
 
         for group in self.groups():
             group.change_layer(self, layer)
+
+    def setAlpha(self, alpha):
+        self.image.set_alpha(SpriteAlpha().getAlpha(alpha))
 
     def arrangeRectangle(self):
         self.rect = self.image.get_rect(center=tuple(self.position))
 
 
 class DynamicSprite(StaticSprite):
-    def __init__(self, image, position, layer, speed):
-        StaticSprite.__init__(self, image, position, layer)
+    def __init__(self, image, position, layer, alpha, speed):
+        StaticSprite.__init__(self, image, position, layer, alpha)
 
         self.distance = 0.0
         self.setSpeed(speed)
 
     def setSpeed(self, speed):
-        self.speed = speed
+        self.speed = SpriteSpeed().getSpeed(speed)
 
     def update(self, interval):
         self.distance = interval * self.speed
 
 
 class CardinalSprite(DynamicSprite):
-    def __init__(self, image, position, layer, speed, direction):
-        DynamicSprite.__init__(self, image, position, layer, speed)
+    def __init__(self, image, position, layer, alpha, speed, direction):
+        DynamicSprite.__init__(self, image, position, layer, alpha, speed)
 
         self.setDirection(direction)
 
@@ -163,8 +262,8 @@ class CardinalSprite(DynamicSprite):
 
 
 class InsistenceSprite(CardinalSprite):
-    def __init__(self, image, position, layer, speed, direction):
-        CardinalSprite.__init__(self, image, position, layer, speed, direction)
+    def __init__(self, image, position, layer, alpha, speed, direction):
+        CardinalSprite.__init__(self, image, position, layer, alpha, speed, direction)
 
         self.original_direction = direction
 
@@ -175,13 +274,13 @@ class InsistenceSprite(CardinalSprite):
 
 
 class HipparchusSprite(DynamicSprite):
-    def __init__(self, image, position, layer, speed, angle):
-        DynamicSprite.__init__(self, image, position, layer, speed)
+    def __init__(self, image, position, layer, alpha, speed, angle):
+        DynamicSprite.__init__(self, image, position, layer, alpha, speed)
 
         self.setAngle(angle)
 
     def setAngle(self, angle):
-        self.angle = Hipparchus().getRadiansByDegrees(angle)
+        self.angle = math.radians(SpriteAngle().getAngle(angle))
         
     def update(self, interval):
         DynamicSprite.update(self, interval)
@@ -203,8 +302,8 @@ class SpriteFactory(Base):
         'Hipparchus': HipparchusSprite
     }
 
-    def getSprite(self, type, image, position, layer, speed, direction):
+    def getSprite(self, type, image, position, layer, alpha, speed, direction):
         if SpriteFactory.Sprites.has_key(type):
-            return SpriteFactory.Sprites[type](image, position, layer, speed, direction)
+            return SpriteFactory.Sprites[type](image, position, layer, alpha, speed, direction)
         else:
-            raise FaultArgumentException("Incorrect Sprite Type: {0}".format(type))
+            raise FaultArgumentException("Incorrect sprite type: {0}".format(type))
