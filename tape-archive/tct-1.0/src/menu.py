@@ -28,10 +28,10 @@
 
 
 try:
-    import constants, os, pygame, sound_mixer, graphics
+    import random, constants, os, pygame, sound_mixer, graphics
     from os_utils import file_path, safe_exit
     from utils import get_time_sec
-    from anim_sprite import *
+    from sprite_engine import *
     from credits import Credits
     from kezmenu import KezMenu
     from fsm import State
@@ -60,11 +60,11 @@ MENU_KEY_DEL = 500
 ## menu keyboard repeat interval
 MENU_KEY_INT = 200
 
-## animated sprite speed
-ANIM_SPRITE_SPEED = 200.0
+## sprite speed
+SPRITE_SPEED = 200.0
 
-## animated sprite alpha (on settings)
-ANIM_SPRITE_ALPHA = 80.0
+## sprite alpha (on settings)
+SPRITE_ALPHA = 80
 
 MAIN_FONT_SIZE = 32
 MENU_FONT_SIZE = 25
@@ -163,17 +163,18 @@ class Menu(State):
         # set the settings menu's highlight color
         self.menu_settings.set_highlight_color(SETTINGS_FOCUS_COLOR)
 
-        ## the animated sprite group
-        self.anim_sprites = pygame.sprite.RenderUpdates()
+        ## the sprite group
+        self.sprites = pygame.sprite.LayeredUpdates()
 
-        # create the animated sprites 
-        sprite_num = len(constants.FILES['graphics']['menu']['share']['anim'])
-        sprite_fact = SpriteFactory()
-        for i in range(sprite_num):
-            # create the "right" type of animated sprite using the factory
-            r_sprite = sprite_fact.create_anim_sprite(i, constants.FILES['graphics']['menu']
-                                                      ['share']['anim'][i], ANIM_SPRITE_SPEED)
-            self.anim_sprites.add(r_sprite)
+        # create the sprites 
+        sprites_number = len(constants.FILES['graphics']['menu']['share']['anim'])
+        sprites_factory = SpriteFactory()
+        area = self.screen.get_rect()
+        for i in range(sprites_number):
+            sprite = sprites_factory.getSprite('Hipparchus',
+                                               constants.FILES['graphics']['menu']['share']['anim'][i],
+                                               (area.center), i, MAX_ALPHA, SPRITE_SPEED, area, 'Random')
+            self.sprites.add(sprite)
 
         ## create clock and track time
         self.clock = pygame.time.Clock()
@@ -193,11 +194,9 @@ class Menu(State):
             # count time passed in seconds
             time_passed_seconds = get_time_sec(self.clock.tick(MENU_CLOCK_TICK))
 
-            # animate the sprites
-            self.anim_sprites.update(time_passed_seconds)
-
-            # rectlist = self.anim_sprites.draw(self.screen)
-            self.anim_sprites.draw(self.screen)
+            # move the sprites
+            self.sprites.update(time_passed_seconds)
+            self.sprites.draw(self.screen)
 
             # draw the main menu
             self.menu_main.draw(self.screen)
@@ -254,9 +253,9 @@ class Menu(State):
         # sub menu, set the flag to true
         self.menu_settings_running = True
 
-        # decrease the alpha of animated sprites
-        for s in self.anim_sprites:
-            s.image.set_alpha(ANIM_SPRITE_ALPHA)
+        # decrease the alpha of sprites
+        for s in self.sprites:
+            s.setAlpha(SPRITE_ALPHA)
 
         # display & update screen, get all the events
         while self.menu_settings_running:
@@ -269,9 +268,9 @@ class Menu(State):
             # count time passed in seconds
             time_passed_seconds = get_time_sec(self.clock.tick(MENU_CLOCK_TICK))
 
-            # animate the sprites
-            self.anim_sprites.update(time_passed_seconds)
-            self.anim_sprites.draw(self.screen)
+            # move the sprites
+            self.sprites.update(time_passed_seconds)
+            self.sprites.draw(self.screen)
             
             # draw settings menu background box
             menu_bg = self.screen.blit(self.menu_box_bg, (
@@ -327,9 +326,9 @@ class Menu(State):
                     elif e.key == pygame.K_m:
                         self._toggle_music_option()
 
-        # restore the alpha of the animated sprites
-        for s in self.anim_sprites:
-            s.image.set_alpha(MAX_ALPHA)
+        # restore the alpha of the sprites
+        for s in self.sprites:
+            s.setAlpha(MAX_ALPHA)
 
     ## entry point for main menu's new game option
     #
