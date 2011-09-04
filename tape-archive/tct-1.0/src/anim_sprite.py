@@ -32,14 +32,12 @@ try:
     from graphics import load_image
     from base import Base
     import constants
-except ImportError as err:
-    try:
+except (RuntimeError, ImportError) as err:
         import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
-        print(("{0}: {1}".format(path, err)))
-    except ImportError:
-        print(("Couldn't load module: {0}".format(err)))
-    exit(2)
+        print('{0}: {1}'.format(path, err))
+        exit(MOD_FAIL_ERR)
 
 # TODO: leave only SpriteFactory (the rest are temporary for
 # demonstrating docstrings)
