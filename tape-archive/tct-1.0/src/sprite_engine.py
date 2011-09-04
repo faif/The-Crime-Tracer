@@ -65,7 +65,7 @@ class ValueLimitator(MinimumMaximum):
     def __init__(self, minimum, maximum):
         MinimumMaximum.__init__(self, minimum, maximum)
 
-    def getValue(self, value):
+    def constrain(self, value):
         if value >= self.getMinimum() and value <= self.getMaximum():
             return value
 
@@ -76,9 +76,9 @@ class IntegerLimitator(ValueLimitator):
     def __init__(self, minimum, maximum):
         ValueLimitator.__init__(self, minimum, maximum)
 
-    def getValue (self, value):
+    def constrain (self, value):
         if isinstance(value, int):
-            return ValueLimitator.getValue(self, value)
+            return ValueLimitator.constrain(self, value)
 
         if isinstance(value, str):
             if value == 'Random':
@@ -91,9 +91,9 @@ class FloatLimitator(ValueLimitator):
     def __init__(self, minimum, maximum):
         ValueLimitator.__init__(self, minimum, maximum)
 
-    def getValue (self, value):
+    def constrain (self, value):
         if isinstance(value, float):
-            return ValueLimitator.getValue(self, value)
+            return ValueLimitator.constrain(self, value)
 
         if isinstance(value, str):
             if value == 'Random':
@@ -126,7 +126,7 @@ class SpriteSpeed(Base):
         if isinstance (speed, int):
             speed = float (speed)
 
-        return self.limitator.getValue(speed)
+        return self.limitator.constrain(speed)
 
 
 class SpriteAlpha(Base):
@@ -137,7 +137,7 @@ class SpriteAlpha(Base):
         self.limitator = LimitatorFactory().getLimitator('Integer', SpriteAlpha.MinimumAlpha, SpriteAlpha.MaximumAlpha)
 
     def getAlpha(self, alpha):
-        return self.limitator.getValue(alpha)
+        return self.limitator.constrain(alpha)
 
 
 class SpriteAngle(Base):
@@ -145,10 +145,13 @@ class SpriteAngle(Base):
     MaximumAngle = 360
 
     def __init__(self):
-        self.limitator = LimitatorFactory().getLimitator('Integer', SpriteAngle.MinimumAngle, SpriteAngle.MaximumAngle)
+        self.limitator = LimitatorFactory().getLimitator('Float', SpriteAngle.MinimumAngle, SpriteAngle.MaximumAngle)
 
     def getAngle(self, angle):
-        return self.limitator.getValue(angle)
+        if isinstance (angle, int):
+            angle = float (angle)
+
+        return self.limitator.constrain(angle)
 
 
 class SpriteLayer(Base):
@@ -159,7 +162,7 @@ class SpriteLayer(Base):
         self.limitator = LimitatorFactory().getLimitator('Integer', SpriteLayer.MinimumLayer, SpriteLayer.MaximumLayer)
 
     def getLayer(self, layer):
-        return self.limitator.getValue(layer)
+        return self.limitator.constrain(layer)
 
 
 class Cardinal(Base):
@@ -285,8 +288,8 @@ class HipparchusSprite(DynamicSprite):
     def update(self, interval):
         DynamicSprite.update(self, interval)
 
-        dx = math.sin(self.angle)
-        dy = math.cos(self.angle)
+        dy = math.sin(self.angle)
+        dx = math.cos(self.angle)
 
         vector = Vector2D (dx, dy)
 
