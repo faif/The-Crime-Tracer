@@ -44,68 +44,69 @@ __all__ = [
 
 
 class MinimumMaximum(Base):
-   def __init__(self, minimum, maximum):
-       if type(minimum) != type(maximum):
-           raise FaultArgumentException("Minimum ({0}) is different than Maximum ({1})".format(type(minimum), type(maximum)))
+    def __init__(self, type, minimum, maximum):
+        if not isinstance(minimum, type):
+            raise FaultArgumentException("Minimum type should be: {0}".format(type))
 
-       if minimum > maximum:
-           raise FaultArgumentException("Minimum ({0}) must be less than Maximum ({1})".format(minimum, maximum))
+        if not isinstance(maximum, type):
+            raise FaultArgumentException("Maximum type should be: {0}".format(type))
 
-       self.minimum = minimum
-       self.maximum = maximum
+        if minimum > maximum:
+            raise FaultArgumentException("Minimum ({0}) must be less than Maximum ({1})".format(minimum, maximum))
 
-   def getMinimum(self):
-       return self.minimum
+        self.minimum = minimum
+        self.maximum = maximum
 
-   def getMaximum(self):
-       return self.maximum
+        self.type = type
+
+    def getMinimum(self):
+        return self.minimum
+
+    def getMaximum(self):
+        return self.maximum
 
 
 class ValueBounder(MinimumMaximum):
-    def __init__(self, minimum, maximum):
-        MinimumMaximum.__init__(self, minimum, maximum)
+    def __init__(self, type, minimum, maximum):
+        super(ValueBounder, self).__init__(type, minimum, maximum)
 
     def constrain(self, value):
-        if value >= self.getMinimum() and value <= self.getMaximum():
-            return value
-
-        raise FaultArgumentException("Value ({0}) is out of range: [{1}, {2}]".format(value, self.getMinimum(), self.getMaximum()))
+        if isinstance(value, self.type):
+            if value >= self.getMinimum() and value <= self.getMaximum():
+                return value
+            else:
+                raise FaultArgumentException("Value ({0}) is out of range: [{1}, {2}]".format(value, self.getMinimum(), self.getMaximum()))
+        else:
+            raise FaultArgumentException("Type of value should be: {0}".format(self.type))
 
 
 class IntegerBounder(ValueBounder):
     def __init__(self, minimum, maximum):
-        ValueBounder.__init__(self, minimum, maximum)
+        super(IntegerBounder, self).__init__(int, minimum, maximum)
 
     def constrain (self, value):
-        if isinstance(value, int):
-            return ValueBounder.constrain(self, value)
-
         if isinstance(value, str):
             if value == 'Random':
                 return random.randint(self.getMinimum(), self.getMaximum())
 
-        raise FaultArgumentException("Incorrect integer value: {0}".format(value))
+        return super(IntegerBounder, self).constrain(value)
 
 
 class FloatBounder(ValueBounder):
     def __init__(self, minimum, maximum):
-        ValueBounder.__init__(self, minimum, maximum)
+        super(FloatBounder, self).__init__(float, minimum, maximum)
 
     def constrain (self, value):
-        if isinstance(value, float):
-            return ValueBounder.constrain(self, value)
-
         if isinstance(value, str):
             if value == 'Random':
                 return random.uniform(self.getMinimum(), self.getMaximum())
 
-        raise FaultArgumentException("Incorrect float value: {0}".format(value))
+        return super(FloatBounder, self).constrain(value)
 
 
 class BounderFactory(Base):
     Bounders = {
-        'Integer': IntegerBounder,
-        'Float': FloatBounder
+        'Integer': IntegerBounder, 'Float': FloatBounder
     }
 
     def getBounder(self, type, minimum, maximum):
@@ -116,8 +117,8 @@ class BounderFactory(Base):
 
 
 class SpriteSpeed(Base):
-    MinimumSpeed = 0
-    MaximumSpeed = 1000
+    MinimumSpeed = 0.0
+    MaximumSpeed = 1000.0
 
     def __init__(self):
         self.bounder = BounderFactory().getBounder('Float', SpriteSpeed.MinimumSpeed, SpriteSpeed.MaximumSpeed)
@@ -141,8 +142,8 @@ class SpriteAlpha(Base):
 
 
 class SpriteAngle(Base):
-    MinimumAngle = 0
-    MaximumAngle = 360
+    MinimumAngle = 0.0
+    MaximumAngle = 360.0
 
     def __init__(self):
         self.bounder = BounderFactory().getBounder('Float', SpriteAngle.MinimumAngle, SpriteAngle.MaximumAngle)
@@ -237,7 +238,7 @@ class LimiterFactory(Base):
 
 class StaticSprite(pygame.sprite.Sprite, Base):
     def __init__(self, image, position, layer, alpha):
-        pygame.sprite.Sprite.__init__(self)
+        super(StaticSprite, self).__init__()
 
         self.setImage(image)
         self.setPosition(position)
@@ -271,7 +272,7 @@ class StaticSprite(pygame.sprite.Sprite, Base):
 
 class DynamicSprite(StaticSprite):
     def __init__(self, image, position, layer, alpha, speed, area):
-        StaticSprite.__init__(self, image, position, layer, alpha)
+        super(DynamicSprite, self).__init__(image, position, layer, alpha)
 
         self.distance = 0.0
 
@@ -295,7 +296,7 @@ class DynamicSprite(StaticSprite):
 
 class CardinalSprite(DynamicSprite):
     def __init__(self, image, position, layer, alpha, speed, area, direction):
-        DynamicSprite.__init__(self, image, position, layer, alpha, speed, area)
+        super(CardinalSprite, self).__init__(image, position, layer, alpha, speed, area)
 
         self.setDirection(direction)
 
@@ -303,7 +304,7 @@ class CardinalSprite(DynamicSprite):
         self.direction = Vector2D(Cardinal().getUnitVectorByDirection(direction))
 
     def update(self, interval):
-        DynamicSprite.update(self, interval)
+        super(CardinalSprite, self).update(interval)
 
         self.position += self.direction * self.distance
 
@@ -314,19 +315,19 @@ class CardinalSprite(DynamicSprite):
 
 class InsistenceSprite(CardinalSprite):
     def __init__(self, image, position, layer, alpha, speed, area, direction):
-        CardinalSprite.__init__(self, image, position, layer, alpha, speed, area, direction)
+        super(InsistenceSprite, self).__init__(image, position, layer, alpha, speed, area, direction)
 
         self.original_direction = direction
 
     def update(self, interval):
         self.direction = Vector2D(Cardinal().getUnitVectorByDirection(self.original_direction))
 
-        CardinalSprite.update(self, interval)
+        super(InsistenceSprite, self).update(interval)
 
 
 class HipparchusSprite(DynamicSprite):
     def __init__(self, image, position, layer, alpha, speed, area, angle):
-        DynamicSprite.__init__(self, image, position, layer, alpha, speed, area)
+        super(HipparchusSprite, self).__init__(image, position, layer, alpha, speed, area)
 
         self.setAngle(angle)
 
@@ -334,7 +335,7 @@ class HipparchusSprite(DynamicSprite):
         self.angle = math.radians(SpriteAngle().getAngle(angle))
         
     def update(self, interval):
-        DynamicSprite.update(self, interval)
+        super(HipparchusSprite, self).update(interval)
 
         dy = math.sin(self.angle)
         dx = math.cos(self.angle)
