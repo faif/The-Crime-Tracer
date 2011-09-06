@@ -19,34 +19,22 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 try:
     import constants
     from base import Base
     from fsm import FSM, State
     from os_utils import safe_exit
-except ImportError as err:
-    try:
+except (RuntimeError, ImportError) as err:
         import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
-        print((': '.join((path, str(err)))))
-    # importing os failed, print a custom message...
-    except ImportError:
-        print((': '.join(("couldn't load module", str(err)))))
-    exit(2)
+        print('{0}: {1}'.format(path, err))
+        exit(MOD_FAIL_ERR)
 
-## objects imported when `from <module> import *' is used
 __all__ = ['LevelFactory']
 
-## the "right" way to create a new level (exposed interface)
-#
-class LevelFactory(Base):
 
-    ## create a new level
-    #
-    # @param self the object pointer
-    # @param name the level's name
-    # def create_level(self, name, game_opts):
+class LevelFactory(Base):
     def create_level(self, name):
         # find out which factory to use
         if (name == constants.SCENES['level_one']):
@@ -61,23 +49,16 @@ class LevelFactory(Base):
         return self.factory
 
 
-## one factory for each level because there might be
-## differences (different number and type of rooms, etc)
-#
 class LevelOneFactory(State):
-    # part of the borg pattern
+    '''One factory for each level because there might be
+    differences (different number and type of rooms, etc)
+    '''
     __shared_state = {}
 
-    # def __init__(self, game_opts):
     def __init__(self):
-        # part of the borg pattern
         self.__dict__ = self.__shared_state
-
-        # initialize the state
         State.__init__(self, constants.SCENES['level_one'])
-        # the 1st level states
         self.states = FSM()
-        # self.game_opts = game_opts
         self.states.active_state = None
 
     # rooms, doors, obstacles, etc.
@@ -107,9 +88,6 @@ class LevelOneFactory(State):
     def create_door(self, colour):
         return Door(colour)
 
-    ## what to do when the level is enabled
-    #
-    # @param self the object pointer
     def do_actions(self):
         safe_exit()
 
@@ -119,8 +97,6 @@ class MapSite: pass
 class Room(State):
     def __init__(self, name):
         self.name = name
-
-        # initialize the state
         State.__init__(self, self.name)
 
     def do_actions(self):
@@ -149,12 +125,3 @@ class Item(MapSite):
 
     def pick(self):
         print('picking', str(self))
-
-
-# test the script if executed
-if __name__ == '__main__':
-    import sys
-    print((' '.join(('Testing', sys.argv[0]))))
-    flev = LevelFactory().create_level(constants.SCENES['level_one'])
-    print((' '.join(('Testing', str(flev)))))
-    flev.run()
