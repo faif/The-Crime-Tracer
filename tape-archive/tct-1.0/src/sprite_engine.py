@@ -54,16 +54,22 @@ class MinimumMaximum(Base):
         if minimum > maximum:
             raise FaultArgumentException("Minimum ({0}) must be less than Maximum ({1})".format(minimum, maximum))
 
-        self.minimum = minimum
-        self.maximum = maximum
+        self._minimum = minimum
+        self._maximum = maximum
 
-        self.type = type
+        self._type = type
 
-    def getMinimum(self):
-        return self.minimum
+    @property
+    def minimum(self):
+        return self._minimum
 
-    def getMaximum(self):
-        return self.maximum
+    @property
+    def maximum(self):
+        return self._maximum
+
+    @property
+    def type(self):
+        return self._type
 
 
 class ValueBounder(MinimumMaximum):
@@ -72,10 +78,10 @@ class ValueBounder(MinimumMaximum):
 
     def constrain(self, value):
         if isinstance(value, self.type):
-            if value >= self.getMinimum() and value <= self.getMaximum():
+            if value >= self.minimum and value <= self.maximum:
                 return value
             else:
-                raise FaultArgumentException("Value ({0}) is out of range: [{1}, {2}]".format(value, self.getMinimum(), self.getMaximum()))
+                raise FaultArgumentException("Value ({0}) is out of range: [{1}, {2}]".format(value, self.minimum, self.maximum))
         else:
             raise FaultArgumentException("Type of value should be: {0}".format(self.type))
 
@@ -87,41 +93,47 @@ class IntegerBounder(ValueBounder):
     def constrain (self, value):
         if isinstance(value, str):
             if value == 'Random':
-                return random.randint(self.getMinimum(), self.getMaximum())
+                return random.randint(self.minimum, self.maximum)
 
         return super(IntegerBounder, self).constrain(value)
 
 
-class FloatBounder(ValueBounder):
+class FloatingBounder(ValueBounder):
     def __init__(self, minimum, maximum):
-        super(FloatBounder, self).__init__(float, minimum, maximum)
+        super(FloatingBounder, self).__init__(float, minimum, maximum)
 
     def constrain (self, value):
         if isinstance(value, str):
             if value == 'Random':
-                return random.uniform(self.getMinimum(), self.getMaximum())
+                return random.uniform(self.minimum, self.maximum)
 
-        return super(FloatBounder, self).constrain(value)
+        return super(FloatingBounder, self).constrain(value)
 
 
 class BounderFactory(Base):
-    Bounders = {
-        'Integer': IntegerBounder, 'Float': FloatBounder
+    __shared_state = {}
+
+    __bounders = {
+        'Integer': IntegerBounder,
+        'Floating': FloatingBounder
     }
 
+    def __init__(self):
+        self.__dict__ = self.__shared_state
+
     def getBounder(self, type, minimum, maximum):
-        if BounderFactory.Bounders.has_key(type):
-            return BounderFactory.Bounders[type](minimum, maximum)
+        if BounderFactory.__bounders.has_key(type):
+            return BounderFactory.__bounders[type](minimum, maximum)
         else:
             raise FaultArgumentException("Incorrect bounder type: {0}".format(type))
 
 
 class SpriteSpeed(Base):
-    MinimumSpeed = 0.0
-    MaximumSpeed = 1000.0
+    __minimumSpeed = 0.0
+    __maximumSpeed = 1000.0
 
     def __init__(self):
-        self.bounder = BounderFactory().getBounder('Float', SpriteSpeed.MinimumSpeed, SpriteSpeed.MaximumSpeed)
+        self.bounder = BounderFactory().getBounder('Floating', SpriteSpeed.__minimumSpeed, SpriteSpeed.__maximumSpeed)
 
     def getSpeed(self, speed):
         if isinstance (speed, int):
@@ -131,22 +143,22 @@ class SpriteSpeed(Base):
 
 
 class SpriteAlpha(Base):
-    MinimumAlpha = 0
-    MaximumAlpha = 255
+    __minimumAlpha = 0
+    __maximumAlpha = 255
 
     def __init__(self):
-        self.bounder = BounderFactory().getBounder('Integer', SpriteAlpha.MinimumAlpha, SpriteAlpha.MaximumAlpha)
+        self.bounder = BounderFactory().getBounder('Integer', SpriteAlpha.__minimumAlpha, SpriteAlpha.__maximumAlpha)
 
     def getAlpha(self, alpha):
         return self.bounder.constrain(alpha)
 
 
 class SpriteAngle(Base):
-    MinimumAngle = 0.0
-    MaximumAngle = 360.0
+    __minimumAngle = 0.0
+    __maximumAngle = 360.0
 
     def __init__(self):
-        self.bounder = BounderFactory().getBounder('Float', SpriteAngle.MinimumAngle, SpriteAngle.MaximumAngle)
+        self.bounder = BounderFactory().getBounder('Floating', SpriteAngle.__minimumAngle, SpriteAngle.__maximumAngle)
 
     def getAngle(self, angle):
         if isinstance (angle, int):
@@ -156,18 +168,18 @@ class SpriteAngle(Base):
 
 
 class SpriteLayer(Base):
-    MinimumLayer = 0
-    MaximumLayer = 200
+    __minimumLayer = 0
+    __maximumLayer = 200
 
     def __init__(self):
-        self.bounder = BounderFactory().getBounder('Integer', SpriteLayer.MinimumLayer, SpriteLayer.MaximumLayer)
+        self.bounder = BounderFactory().getBounder('Integer', SpriteLayer.__minimumLayer, SpriteLayer.__maximumLayer)
 
     def getLayer(self, layer):
         return self.bounder.constrain(layer)
 
 
 class Cardinal(Base):
-    Mapping = {
+    __mapping = {
         'North': (0, -1),
         'East':  (+1, 0),
         'South': (0, +1),
@@ -179,31 +191,29 @@ class Cardinal(Base):
         'SouthWest': (-0.707, +0.707)
     }
 
-    def __init__(self): pass
-
     def getUnitVectorByDirection(self, direction):
         if isinstance(direction, str):
             if direction == 'Random':
-                return Cardinal.Mapping[random.choice(Cardinal.Mapping.keys())]
-            elif Cardinal.Mapping.has_key(direction):
-                return Cardinal.Mapping[direction]
+                return Cardinal.__mapping[random.choice(Cardinal.__mapping.keys())]
+            elif Cardinal.__mapping.has_key(direction):
+                return Cardinal.__mapping[direction]
 
         raise FaultArgumentException("Incorrect Cardinal direction: {0}".format(direction))
 
     def getDirectionByUnitVector(self, vector):
         if isinstance(vector, str):
             if vector == 'Random':
-                return random.choice(Cardinal.Mapping.keys())
+                return random.choice(Cardinal.__mapping.keys())
 
         if isinstance(vector, tuple) or isinstance(vector, list):
-            for key, value in Cardinal.Mapping.items():
+            for key, value in Cardinal.__mapping.items():
                 if tuple(value) == tuple(vector):
                     return key
 
         raise FaultArgumentException("Incorrect Cardinal unit vector: {0}".format(vector))
 
 
-class SpriteLimiter:
+class SpriteLimiter(Base):
     def run(self, sprite):
         pass
 
@@ -225,13 +235,18 @@ class MirrorLimiter(SpriteLimiter):
 
 
 class LimiterFactory(Base):
-    Limiters = {
+    __shared_state = {}
+
+    __limiters = {
         'Mirror': MirrorLimiter
     }
 
+    def __init__(self):
+        self.__dict__ = self.__shared_state
+
     def getLimiter(self, type):
-        if LimiterFactory.Limiters.has_key(type):
-            return LimiterFactory.Limiters[type]()
+        if LimiterFactory.__limiters.has_key(type):
+            return LimiterFactory.__limiters[type]()
         else:
             raise FaultArgumentException("Incorrect limiter type: {0}".format(type))
 
@@ -350,14 +365,19 @@ class HipparchusSprite(DynamicSprite):
 
 
 class SpriteFactory(Base):
-    Sprites = {
+    __shared_state = {}
+
+    __sprites = {
         'Cardinal': CardinalSprite,
         'Insistence': InsistenceSprite,
         'Hipparchus': HipparchusSprite
     }
 
+    def __init__(self):
+        self.__dict__ = self.__shared_state
+
     def getSprite(self, type, image, position, layer, alpha, speed, area, direction):
-        if SpriteFactory.Sprites.has_key(type):
-            return SpriteFactory.Sprites[type](image, position, layer, alpha, speed, area, direction)
+        if SpriteFactory.__sprites.has_key(type):
+            return SpriteFactory.__sprites[type](image, position, layer, alpha, speed, area, direction)
         else:
             raise FaultArgumentException("Incorrect sprite type: {0}".format(type))
