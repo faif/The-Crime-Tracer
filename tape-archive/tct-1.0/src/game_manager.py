@@ -32,6 +32,7 @@ try:
     from fsm import FSM
     from intro import Intro
     from menu import Menu
+    from borg import Borg
     from base import Base
     from level import LevelFactory
 except (RuntimeError, ImportError) as err:
@@ -43,18 +44,9 @@ except (RuntimeError, ImportError) as err:
 
 __all__ = ['GameManager']
 
-class GameManager(Base):
-    '''The game manager class is responsible for keeping
-    track of the active scene (i.e. intro, menu, level 1, 
-    etc), changing between scenes, etc. It's a borg since 
-    we need a shared state for all instances.'''
-
-    # part of the borg pattern
-    __shared_state = {}
-
+class GameManager(Borg):
     def __init__(self, game_opts):
-        # part of the borg pattern
-        self.__dict__ = self.__shared_state
+        super(GameManager, self).__init__()
 
         self.scenes = FSM()
 

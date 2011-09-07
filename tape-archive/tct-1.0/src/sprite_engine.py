@@ -21,14 +21,15 @@
 
 
 try:
+    import math
     import random
     import pygame
-    import math
     import graphics
 
     from base import Base
-    from generic_exceptions import *
-    from vector import Vector2D
+    from borg import Borg
+
+    from gameobjects.vector2 import Vector2
 except (RuntimeError, ImportError) as error:
     import os, constants
     path = os.path.basename(__file__)
@@ -46,13 +47,13 @@ __all__ = [
 class MinimumMaximum(Base):
     def __init__(self, type, minimum, maximum):
         if not isinstance(minimum, type):
-            raise FaultArgumentException("Minimum type should be: {0}".format(type))
+            raise ValueError("Minimum type should be: {0}".format(type))
 
         if not isinstance(maximum, type):
-            raise FaultArgumentException("Maximum type should be: {0}".format(type))
+            raise ValueError("Maximum type should be: {0}".format(type))
 
         if minimum > maximum:
-            raise FaultArgumentException("Minimum ({0}) must be less than Maximum ({1})".format(minimum, maximum))
+            raise ValueError("Minimum ({0}) must be less than Maximum ({1})".format(minimum, maximum))
 
         self._minimum = minimum
         self._maximum = maximum
@@ -81,9 +82,9 @@ class ValueBounder(MinimumMaximum):
             if value >= self.minimum and value <= self.maximum:
                 return value
             else:
-                raise FaultArgumentException("Value ({0}) is out of range: [{1}, {2}]".format(value, self.minimum, self.maximum))
+                raise ValueError("Value ({0}) is out of range: [{1}, {2}]".format(value, self.minimum, self.maximum))
         else:
-            raise FaultArgumentException("Type of value should be: {0}".format(self.type))
+            raise ValueError("Type of value should be: {0}".format(self.type))
 
 
 class IntegerBounder(ValueBounder):
@@ -110,75 +111,81 @@ class FloatingBounder(ValueBounder):
         return super(FloatingBounder, self).constrain(value)
 
 
-class BounderFactory(Base):
-    __shared_state = {}
-
+class BounderFactory(Borg):
     __bounders = {
         'Integer': IntegerBounder,
         'Floating': FloatingBounder
     }
 
     def __init__(self):
-        self.__dict__ = self.__shared_state
+        super(BounderFactory, self).__init__()
 
     def getBounder(self, type, minimum, maximum):
         if BounderFactory.__bounders.has_key(type):
             return BounderFactory.__bounders[type](minimum, maximum)
         else:
-            raise FaultArgumentException("Incorrect bounder type: {0}".format(type))
+            raise ValueError("Incorrect bounder type: {0}".format(type))
 
 
-class SpriteSpeed(Base):
+class SpriteSpeed(Borg):
     __minimumSpeed = 0.0
     __maximumSpeed = 1000.0
 
-    def __init__(self):
-        self.bounder = BounderFactory().getBounder('Floating', SpriteSpeed.__minimumSpeed, SpriteSpeed.__maximumSpeed)
+    __bounder = BounderFactory().getBounder('Floating', __minimumSpeed, __maximumSpeed)
 
-    def getSpeed(self, speed):
+    def __init__(self):
+        super(SpriteSpeed, self).__init__()
+
+    def constrain(self, speed):
         if isinstance (speed, int):
             speed = float (speed)
 
-        return self.bounder.constrain(speed)
+        return SpriteSpeed.__bounder.constrain(speed)
 
 
-class SpriteAlpha(Base):
+class SpriteAlpha(Borg):
     __minimumAlpha = 0
     __maximumAlpha = 255
 
+    __bounder = BounderFactory().getBounder('Integer', __minimumAlpha, __maximumAlpha)
+
     def __init__(self):
-        self.bounder = BounderFactory().getBounder('Integer', SpriteAlpha.__minimumAlpha, SpriteAlpha.__maximumAlpha)
+        super(SpriteAlpha, self).__init__()
 
-    def getAlpha(self, alpha):
-        return self.bounder.constrain(alpha)
+    def constrain(self, alpha):
+        return SpriteAlpha.__bounder.constrain(alpha)
 
 
-class SpriteAngle(Base):
+class SpriteAngle(Borg):
     __minimumAngle = 0.0
     __maximumAngle = 360.0
 
-    def __init__(self):
-        self.bounder = BounderFactory().getBounder('Floating', SpriteAngle.__minimumAngle, SpriteAngle.__maximumAngle)
+    __bounder = BounderFactory().getBounder('Floating', __minimumAngle, __maximumAngle)
 
-    def getAngle(self, angle):
+    def __init__(self):
+        super(SpriteAngle, self).__init__()
+
+    def constrain(self, angle):
         if isinstance (angle, int):
             angle = float (angle)
 
-        return self.bounder.constrain(angle)
+        return SpriteAngle.__bounder.constrain(angle)
 
 
-class SpriteLayer(Base):
+class SpriteLayer(Borg):
     __minimumLayer = 0
     __maximumLayer = 200
 
+    __bounder = BounderFactory().getBounder('Integer', __minimumLayer, __maximumLayer)
+
     def __init__(self):
-        self.bounder = BounderFactory().getBounder('Integer', SpriteLayer.__minimumLayer, SpriteLayer.__maximumLayer)
+        super(SpriteLayer, self).__init__()
 
-    def getLayer(self, layer):
-        return self.bounder.constrain(layer)
+    def constrain(self, layer):
+        return SpriteLayer.__bounder.constrain(layer)
 
 
-class Cardinal(Base):
+class Cardinal(Borg):
     __mapping = {
         'North': (0, -1),
         'East':  (+1, 0),
@@ -191,6 +198,9 @@ class Cardinal(Base):
         'SouthWest': (-0.707, +0.707)
     }
 
+    def __init__(self):
+        super(Cardinal, self).__init__()
+
     def getUnitVectorByDirection(self, direction):
         if isinstance(direction, str):
             if direction == 'Random':
@@ -198,7 +208,7 @@ class Cardinal(Base):
             elif Cardinal.__mapping.has_key(direction):
                 return Cardinal.__mapping[direction]
 
-        raise FaultArgumentException("Incorrect Cardinal direction: {0}".format(direction))
+        raise ValueError("Incorrect Cardinal direction: {0}".format(direction))
 
     def getDirectionByUnitVector(self, vector):
         if isinstance(vector, str):
@@ -210,7 +220,7 @@ class Cardinal(Base):
                 if tuple(value) == tuple(vector):
                     return key
 
-        raise FaultArgumentException("Incorrect Cardinal unit vector: {0}".format(vector))
+        raise ValueError("Incorrect Cardinal unit vector: {0}".format(vector))
 
 
 class SpriteLimiter(Base):
@@ -234,21 +244,19 @@ class MirrorLimiter(SpriteLimiter):
             sprite.arrangePosition()
 
 
-class LimiterFactory(Base):
-    __shared_state = {}
-
+class LimiterFactory(Borg):
     __limiters = {
         'Mirror': MirrorLimiter
     }
 
     def __init__(self):
-        self.__dict__ = self.__shared_state
+        super(LimiterFactory, self).__init__()
 
     def getLimiter(self, type):
         if LimiterFactory.__limiters.has_key(type):
             return LimiterFactory.__limiters[type]()
         else:
-            raise FaultArgumentException("Incorrect limiter type: {0}".format(type))
+            raise ValueError("Incorrect limiter type: {0}".format(type))
 
 
 class StaticSprite(pygame.sprite.Sprite, Base):
@@ -265,10 +273,10 @@ class StaticSprite(pygame.sprite.Sprite, Base):
         self.image = graphics.load_image(image)[0]
 
     def setPosition(self, position):
-        self.position = Vector2D(position)
+        self.position = Vector2(position)
 
     def setLayer(self, layer):
-        layer = SpriteLayer().getLayer(layer)
+        layer = SpriteLayer().constrain(layer)
 
         self._layer = layer
 
@@ -276,13 +284,13 @@ class StaticSprite(pygame.sprite.Sprite, Base):
             group.change_layer(self, layer)
 
     def setAlpha(self, alpha):
-        self.image.set_alpha(SpriteAlpha().getAlpha(alpha))
+        self.image.set_alpha(SpriteAlpha().constrain(alpha))
 
     def arrangeRectangle(self):
         self.rect = self.image.get_rect(center=tuple(self.position))
 
     def arrangePosition(self):
-        self.position = Vector2D(self.rect.center)
+        self.position = Vector2(self.rect.center)
 
 
 class DynamicSprite(StaticSprite):
@@ -297,7 +305,7 @@ class DynamicSprite(StaticSprite):
         self.limiter = LimiterFactory().getLimiter('Mirror')
 
     def setSpeed(self, speed):
-        self.speed = SpriteSpeed().getSpeed(speed)
+        self.speed = SpriteSpeed().constrain(speed)
 
     def setArea(self, area):
         self.area = area
@@ -316,7 +324,7 @@ class CardinalSprite(DynamicSprite):
         self.setDirection(direction)
 
     def setDirection(self, direction):
-        self.direction = Vector2D(Cardinal().getUnitVectorByDirection(direction))
+        self.direction = Vector2(Cardinal().getUnitVectorByDirection(direction))
 
     def update(self, interval):
         super(CardinalSprite, self).update(interval)
@@ -335,7 +343,7 @@ class InsistenceSprite(CardinalSprite):
         self.original_direction = direction
 
     def update(self, interval):
-        self.direction = Vector2D(Cardinal().getUnitVectorByDirection(self.original_direction))
+        self.direction = Vector2(Cardinal().getUnitVectorByDirection(self.original_direction))
 
         super(InsistenceSprite, self).update(interval)
 
@@ -347,7 +355,7 @@ class HipparchusSprite(DynamicSprite):
         self.setAngle(angle)
 
     def setAngle(self, angle):
-        self.angle = math.radians(SpriteAngle().getAngle(angle))
+        self.angle = math.radians(SpriteAngle().constrain(angle))
         
     def update(self, interval):
         super(HipparchusSprite, self).update(interval)
@@ -355,7 +363,7 @@ class HipparchusSprite(DynamicSprite):
         dy = math.sin(self.angle)
         dx = math.cos(self.angle)
 
-        vector = Vector2D (dx, dy)
+        vector = Vector2(dx, dy)
 
         self.position += vector * self.distance
 
@@ -364,9 +372,7 @@ class HipparchusSprite(DynamicSprite):
         self.limiter.run(self)
 
 
-class SpriteFactory(Base):
-    __shared_state = {}
-
+class SpriteFactory(Borg):
     __sprites = {
         'Cardinal': CardinalSprite,
         'Insistence': InsistenceSprite,
@@ -374,10 +380,10 @@ class SpriteFactory(Base):
     }
 
     def __init__(self):
-        self.__dict__ = self.__shared_state
+        super(SpriteFactory, self).__init__()
 
     def getSprite(self, type, image, position, layer, alpha, speed, area, direction):
         if SpriteFactory.__sprites.has_key(type):
             return SpriteFactory.__sprites[type](image, position, layer, alpha, speed, area, direction)
         else:
-            raise FaultArgumentException("Incorrect sprite type: {0}".format(type))
+            raise ValueError("Incorrect sprite type: {0}".format(type))
