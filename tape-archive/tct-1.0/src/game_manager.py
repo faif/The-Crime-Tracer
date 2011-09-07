@@ -45,6 +45,10 @@ except (RuntimeError, ImportError) as err:
 __all__ = ['GameManager']
 
 class GameManager(Borg):
+    '''The game manager class is responsible for keeping
+    track of the active scene (i.e. intro, menu, level 1, 
+    etc), changing between scenes, etc.'''
+
     def __init__(self, game_opts):
         super(GameManager, self).__init__()
 
