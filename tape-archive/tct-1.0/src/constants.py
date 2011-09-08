@@ -26,6 +26,7 @@ This module contains some reusable constants
 which are imported in many places of the game.
 '''
 from os import path
+from time import strftime, gmtime
 
 '''error return codes'''
 # the module failure exit error signal
@@ -115,27 +116,32 @@ FILES = { 'graphics': {
         }
 
 '''other game information'''
+year_full = strftime('%Y', gmtime())
+year_abbr = strftime('%y', gmtime())
+
 GAME_GPL = (
-  "Copyright (C) 2009-11 Free Software Gaming Geeks <fsgamedev@googlegroups.com>",
-  " ",
-  "This program is free software: you can redistribute it and/or modify",
-  "it under the terms of the GNU General Public License as published by",
-  "the Free Software Foundation, either version 3 of the License, or",
-  "(at your option) any later version.",
-  " ",
-  "This program is distributed in the hope that it will be useful,",
-  "but WITHOUT ANY WARRANTY; without even the implied warranty of",
-  "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
-  "GNU General Public License for more details.",
-  " ",
-  "You should have received a copy of the GNU General Public License",
-  "along with this program.  If not, see <http://www.gnu.org/licenses/>."
+  'Copyright (C) 2009-{0} Free Software Gaming Geeks <fsgamedev@googlegroups.com>'.format(year_abbr),
+  '',
+  'This program is free software: you can redistribute it and/or modify',
+  'it under the terms of the GNU General Public License as published by',
+  'the Free Software Foundation, either version 3 of the License, or',
+  '(at your option) any later version.',
+  '',
+  'This program is distributed in the hope that it will be useful,',
+  'but WITHOUT ANY WARRANTY; without even the implied warranty of',
+  'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the',
+  'GNU General Public License for more details.',
+  '',
+  'You should have received a copy of the GNU General Public License',
+  'along with this program.  If not, see <http://www.gnu.org/licenses/>.'
 )
 
 GAME_AUTHORS = (
-  "Sakis Kasampalis <faif at dtek period gr>",
-  "Efstathios Xatzikiriakidis <contact at efxa period gr>",
-  "Nikolaos Delis <delis89 at gmail period com>",
-  "Dimitris Ventas <rayone99 at gmail period com>",
-  "Mihalis Kasampalis <michaelkas at hotmail period com>"
+    '{0}'.format(GAME_PACKAGE),
+    'Copyright (C) {0} Free Software Gaming Geeks.'.format(year_full),
+    'License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.',
+    'This is free software: you are free to change and redistribute it.',
+    'There is NO WARRANTY, to the extent permitted by law.',
+    '',
+    'Written by Sakis Kasampalis and Efstathios Xatzikiriakidis.'
 )

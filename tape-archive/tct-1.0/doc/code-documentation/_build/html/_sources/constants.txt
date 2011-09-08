@@ -1,6 +1,0 @@
-Generic Python functions
-========================
-
-.. automodule:: base
-   autoclass:: Base
-      :members:
