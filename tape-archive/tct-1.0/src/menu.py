@@ -255,7 +255,7 @@ class Menu(State):
 
         # decrease the alpha of sprites
         for s in self.sprites:
-            s.setAlpha(SPRITE_ALPHA)
+            s.alpha = SPRITE_ALPHA
 
         # display & update screen, get all the events
         while self.menu_settings_running:
@@ -328,7 +328,7 @@ class Menu(State):
 
         # restore the alpha of the sprites
         for s in self.sprites:
-            s.setAlpha(MAX_ALPHA)
+            s.alpha = MAX_ALPHA
 
     ## entry point for main menu's new game option
     #

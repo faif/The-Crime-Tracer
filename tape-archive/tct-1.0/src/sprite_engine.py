@@ -55,22 +55,22 @@ class MinimumMaximum(Base):
         if minimum > maximum:
             raise ValueError("Minimum ({0}) must be less than Maximum ({1})".format(minimum, maximum))
 
-        self._minimum = minimum
-        self._maximum = maximum
+        self.__minimum = minimum
+        self.__maximum = maximum
 
-        self._type = type
+        self.__type = type
 
     @property
     def minimum(self):
-        return self._minimum
+        return self.__minimum
 
     @property
     def maximum(self):
-        return self._maximum
+        return self.__maximum
 
     @property
     def type(self):
-        return self._type
+        return self.__type
 
 
 class ValueBounder(MinimumMaximum):
@@ -224,11 +224,21 @@ class Cardinal(Borg):
 
 
 class SpriteLimiter(Base):
+    def __init__(self, name):
+        self.__name = name
+
+    @property
+    def name(self):
+        return self.__name
+
     def run(self, sprite):
         pass
 
 
-class MirrorLimiter(SpriteLimiter):
+class DefaultLimiter(SpriteLimiter):
+    def __init__(self, name):
+        super(DefaultLimiter, self).__init__(name)
+
     def run(self, sprite):
         if sprite.rect.top > sprite.area.bottom:
             sprite.rect.bottom = sprite.area.top
@@ -246,7 +256,7 @@ class MirrorLimiter(SpriteLimiter):
 
 class LimiterFactory(Borg):
     __limiters = {
-        'Mirror': MirrorLimiter
+        'Default': DefaultLimiter
     }
 
     def __init__(self):
@@ -254,122 +264,185 @@ class LimiterFactory(Borg):
 
     def getLimiter(self, type):
         if LimiterFactory.__limiters.has_key(type):
-            return LimiterFactory.__limiters[type]()
+            return LimiterFactory.__limiters[type](type)
         else:
             raise ValueError("Incorrect limiter type: {0}".format(type))
 
 
 class StaticSprite(pygame.sprite.Sprite, Base):
-    def __init__(self, image, position, layer, alpha):
+    def __init__(self, file, position, layer, alpha):
         super(StaticSprite, self).__init__()
 
-        self.setImage(image)
-        self.setPosition(position)
-        self.setLayer(layer)
-        self.setAlpha(alpha)
+        self.file = file
+        self.position = position
+        self._layer = layer
+        self.alpha = alpha
+
         self.arrangeRectangle()
 
-    def setImage(self, image):
-        self.image = graphics.load_image(image)[0]
+    @property
+    def file(self):
+        return self._file
 
-    def setPosition(self, position):
-        self.position = Vector2(position)
+    @file.setter
+    def file(self, file):
+        self.image = self._file = file
 
-    def setLayer(self, layer):
-        layer = SpriteLayer().constrain(layer)
+    @property
+    def image(self):
+        return self._image
 
-        self._layer = layer
+    @image.setter
+    def image(self, image):
+        self._image = graphics.load_image(image)[0]
 
+    @property
+    def position(self):
+        return tuple(self._position)
+
+    @position.setter
+    def position(self, position):
+        self._position = Vector2(position)
+
+    @property
+    def _layer(self):
+        return self.layer
+
+    @_layer.setter
+    def _layer(self, layer):
+        self.layer = SpriteLayer().constrain(layer)
         for group in self.groups():
-            group.change_layer(self, layer)
+            group.change_layer(self, self.layer)
 
-    def setAlpha(self, alpha):
-        self.image.set_alpha(SpriteAlpha().constrain(alpha))
+    @property
+    def alpha(self):
+        return self._image.get_alpha()
+
+    @alpha.setter
+    def alpha(self, alpha):
+        self._image.set_alpha(SpriteAlpha().constrain(alpha))
+
+    @property
+    def rect(self):
+        return self._rect
 
     def arrangeRectangle(self):
-        self.rect = self.image.get_rect(center=tuple(self.position))
+        self._rect = self._image.get_rect(center=tuple(self._position))
 
     def arrangePosition(self):
-        self.position = Vector2(self.rect.center)
+        self._position = Vector2(self._rect.center)
 
 
 class DynamicSprite(StaticSprite):
-    def __init__(self, image, position, layer, alpha, speed, area):
-        super(DynamicSprite, self).__init__(image, position, layer, alpha)
+    def __init__(self, file, position, layer, alpha, speed, area):
+        super(DynamicSprite, self).__init__(file, position, layer, alpha)
 
-        self.distance = 0.0
+        self._distance = 0.0
 
-        self.setSpeed(speed)
-        self.setArea(area)
-
-        self.limiter = LimiterFactory().getLimiter('Mirror')
-
-    def setSpeed(self, speed):
-        self.speed = SpriteSpeed().constrain(speed)
-
-    def setArea(self, area):
+        self.speed = speed
         self.area = area
 
-    def setLimiter(self, limiter):
-        self.limiter = LimiterFactory().getLimiter(limiter)
+        self.limiter = 'Default'
+
+    @property
+    def speed(self):
+        return self._speed
+
+    @speed.setter
+    def speed(self, speed):
+        self._speed = SpriteSpeed().constrain(speed)
+
+    @property
+    def area(self):
+        return self._area
+
+    @area.setter
+    def area(self, area):
+        self._area = area
+
+    @property
+    def limiter(self):
+        return self._limiter.name
+
+    @limiter.setter
+    def limiter(self, limiter):
+        self._limiter = LimiterFactory().getLimiter(limiter)
 
     def update(self, interval):
-        self.distance = interval * self.speed
+        self._distance = interval * self._speed
 
 
 class CardinalSprite(DynamicSprite):
-    def __init__(self, image, position, layer, alpha, speed, area, direction):
-        super(CardinalSprite, self).__init__(image, position, layer, alpha, speed, area)
+    def __init__(self, file, position, layer, alpha, speed, area, direction):
+        super(CardinalSprite, self).__init__(file, position, layer, alpha, speed, area)
 
-        self.setDirection(direction)
+        self.direction = direction
 
-    def setDirection(self, direction):
-        self.direction = Vector2(Cardinal().getUnitVectorByDirection(direction))
+    @property
+    def direction(self):
+        return Cardinal().getDirectionByUnitVector(tuple(self._direction))
+
+    @direction.setter
+    def direction(self, direction):
+        self._direction = Vector2(Cardinal().getUnitVectorByDirection(direction))
 
     def update(self, interval):
         super(CardinalSprite, self).update(interval)
 
-        self.position += self.direction * self.distance
+        self._position += self._direction * self._distance
 
         self.arrangeRectangle()
 
-        self.limiter.run(self)
+        self._limiter.run(self)
 
 
 class InsistenceSprite(CardinalSprite):
-    def __init__(self, image, position, layer, alpha, speed, area, direction):
-        super(InsistenceSprite, self).__init__(image, position, layer, alpha, speed, area, direction)
+    def __init__(self, file, position, layer, alpha, speed, area, direction):
+        super(InsistenceSprite, self).__init__(file, position, layer, alpha, speed, area, direction)
 
-        self.original_direction = direction
+        self.original = direction
+
+    @property
+    def original(self):
+        return self._original
+
+    @original.setter
+    def original(self, original):
+        self._original = original
 
     def update(self, interval):
-        self.direction = Vector2(Cardinal().getUnitVectorByDirection(self.original_direction))
+        self.direction = self.original
 
         super(InsistenceSprite, self).update(interval)
 
 
 class HipparchusSprite(DynamicSprite):
-    def __init__(self, image, position, layer, alpha, speed, area, angle):
-        super(HipparchusSprite, self).__init__(image, position, layer, alpha, speed, area)
+    def __init__(self, file, position, layer, alpha, speed, area, angle):
+        super(HipparchusSprite, self).__init__(file, position, layer, alpha, speed, area)
 
-        self.setAngle(angle)
+        self.angle = angle
 
-    def setAngle(self, angle):
-        self.angle = math.radians(SpriteAngle().constrain(angle))
-        
+    @property
+    def angle(self):
+        return math.degrees(self._angle)
+
+    @angle.setter
+    def angle(self, angle):
+        self._angle = math.radians(SpriteAngle().constrain(angle))
+
     def update(self, interval):
         super(HipparchusSprite, self).update(interval)
 
-        dy = math.sin(self.angle)
-        dx = math.cos(self.angle)
+        dy = math.sin(self._angle)
+        dx = math.cos(self._angle)
 
         vector = Vector2(dx, dy)
 
-        self.position += vector * self.distance
+        self._position += vector * self._distance
 
         self.arrangeRectangle()
 
-        self.limiter.run(self)
+        self._limiter.run(self)
 
 
 class SpriteFactory(Borg):
@@ -382,8 +455,8 @@ class SpriteFactory(Borg):
     def __init__(self):
         super(SpriteFactory, self).__init__()
 
-    def getSprite(self, type, image, position, layer, alpha, speed, area, direction):
+    def getSprite(self, type, file, position, layer, alpha, speed, area, direction):
         if SpriteFactory.__sprites.has_key(type):
-            return SpriteFactory.__sprites[type](image, position, layer, alpha, speed, area, direction)
+            return SpriteFactory.__sprites[type](file, position, layer, alpha, speed, area, direction)
         else:
             raise ValueError("Incorrect sprite type: {0}".format(type))
