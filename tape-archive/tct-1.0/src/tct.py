@@ -29,7 +29,7 @@ and then starts the game manager for the rest things.
 
 try:
     import os, sys, pygame, constants
-    from parse_options import get_parsed_opts
+    from command_line_parser import get_parsed_opts
     from graphics import load_image
     from game_manager import GameManager
     from base import Base
