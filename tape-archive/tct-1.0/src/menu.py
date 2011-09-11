@@ -74,6 +74,18 @@ MENU_CLOCK_TICK = 50
 SOUND_VOL = 0.2
 MAX_ALPHA = 255
 
+class MenuSprite(HipparchusSprite):
+    def __init__(self, file, position, layer, alpha, speed, area, angle):
+        super(MenuSprite, self).__init__(file, position, layer, alpha, speed, area, angle)
+
+    def update(self, interval):
+        super(MenuSprite, self).update(interval)
+
+        self.arrangeRectangle()
+
+        if not self._limiter is None:
+            self._limiter.run(self)
+
 ## class for game's menu screen
 #
 class Menu(State):
@@ -168,12 +180,11 @@ class Menu(State):
 
         # create the sprites 
         sprites_number = len(constants.FILES['graphics']['menu']['share']['anim'])
-        sprites_factory = SpriteFactory()
-        area = self.screen.get_rect()
+        sprite_area = self.screen.get_rect()
+        sprite_limiter = LimiterFactory().getInstance('Default')
         for i in range(sprites_number):
-            sprite = sprites_factory.getSprite('Hipparchus',
-                                               constants.FILES['graphics']['menu']['share']['anim'][i],
-                                               (area.center), i, MAX_ALPHA, SPRITE_SPEED, area, 'Random')
+            sprite = MenuSprite(constants.FILES['graphics']['menu']['share']['anim'][i], (sprite_area.center), i, MAX_ALPHA, SPRITE_SPEED, sprite_area, 'Random')
+            sprite.limiter = sprite_limiter
             self.sprites.add(sprite)
 
         ## create clock and track time

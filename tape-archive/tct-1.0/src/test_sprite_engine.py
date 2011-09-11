@@ -11,6 +11,69 @@ except (RuntimeError, ImportError) as error:
     exit(constants.MOD_FAIL_ERR)
 
 
+class StaticGO(StaticSprite):
+    def __init__(self, file, position, layer, alpha):
+        super(StaticGO, self).__init__(file, position, layer, alpha)
+
+
+class CardinalGO(CardinalSprite):
+    def __init__(self, file, position, layer, alpha, speed, area, direction):
+        super(CardinalGO, self).__init__(file, position, layer, alpha, speed, area, direction)
+
+    def update(self, interval):
+        super(CardinalGO, self).update(interval)
+
+        self.arrangeRectangle()
+
+        if not self._limiter is None:
+            self._limiter.run(self)
+
+
+class ShakingGO(ShakingSprite):
+    def __init__(self, file, position, layer, alpha, speed, area):
+        super(ShakingGO, self).__init__(file, position, layer, alpha, speed, area)
+
+    def update(self, interval):
+        super(ShakingGO, self).update(interval)
+
+        self.arrangeRectangle()
+
+        if not self._limiter is None:
+            self._limiter.run(self)
+
+
+class HipparchusGO(HipparchusSprite):
+    def __init__(self, file, position, layer, alpha, speed, area, angle):
+        super(HipparchusGO, self).__init__(file, position, layer, alpha, speed, area, angle)
+
+    def update(self, interval):
+        super(HipparchusGO, self).update(interval)
+
+        self.arrangeRectangle()
+
+        if not self._limiter is None:
+            self._limiter.run(self)
+
+
+class TravelGO(TravelSprite):
+    def __init__(self, file, position, layer, alpha, speed, area):
+        super(TravelGO, self).__init__(file, position, layer, alpha, speed, area)
+
+    def update(self, interval):
+        super(TravelGO, self).update(interval)
+
+        if self.travels():
+            if self.arrived():
+                self.stop()
+            else:
+                self.approach()
+
+        self.arrangeRectangle()
+
+        if not self._limiter is None:
+            self._limiter.run(self)
+
+
 def main():
     pygame.init()
 
@@ -20,29 +83,38 @@ def main():
 
     area = screen.get_rect()
 
-    area.inflate_ip((-SCREEN_SIZE[0]/2,
-                     -SCREEN_SIZE[1]/2))
+    half = area.inflate((-SCREEN_SIZE[0]/2, -SCREEN_SIZE[1]/2))
+
+    defaultLimiter = LimiterFactory().getInstance('Default')
+    wallLimiter = LimiterFactory().getInstance('Wall')
 
     sprites = []
 
-    factory = SpriteFactory()
+    sprites.append(ShakingGO("sprite/sprite-1.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area))
+    sprites.append(ShakingGO("sprite/sprite-2.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area))
 
-    sprites.append(factory.getSprite("Insistence", "sprite/sprite-1.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'Random'))
-    sprites.append(factory.getSprite("Insistence", "sprite/sprite-2.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'Random'))
+    sprites.append(CardinalGO("sprite/sprite-3.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'West'))
+    sprites.append(CardinalGO("sprite/sprite-4.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'North'))
 
-    sprites.append(factory.getSprite("Cardinal", "sprite/sprite-3.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'West'))
-    sprites.append(factory.getSprite("Cardinal", "sprite/sprite-4.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'North'))
+    sprites.append(HipparchusGO("sprite/sprite-5.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'Random'))
+    sprites.append(HipparchusGO("sprite/sprite-6.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'Random'))
 
-    sprites.append(factory.getSprite("Hipparchus", "sprite/sprite-5.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, random.randint(0, 360)))
-    sprites.append(factory.getSprite("Hipparchus", "sprite/sprite-6.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, random.randint(0, 360)))
+    sprites.append(StaticGO("sprite/sprite-7.png", (area.center), random.randint(0, 30), random.randint(20, 255)))
 
-    sprites.append(StaticSprite("sprite/sprite-7.png", (area.center), random.randint(0, 30), random.randint(20, 255)))
+    for sprite in sprites:
+        sprite.limiter = defaultLimiter
 
-    changable1 = factory.getSprite("Hipparchus", "sprite/sprite-8.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'Random')
-    changable2 = factory.getSprite("Insistence", "sprite/sprite-9.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'Random')
+    hipparchusGO = HipparchusGO("sprite/sprite-8.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half, 'Random')
+    shakingGO = ShakingGO("sprite/sprite-9.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half)
+    travelGO = TravelGO("sprite/sprite-1.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half)
 
-    sprites.append(changable1)
-    sprites.append(changable2)
+    hipparchusGO.limiter = defaultLimiter
+    shakingGO.limiter = wallLimiter
+    travelGO.limiter = wallLimiter
+
+    sprites.append(hipparchusGO)
+    sprites.append(shakingGO)
+    sprites.append(travelGO)
 
     group = pygame.sprite.LayeredUpdates((sprites))
 
@@ -58,16 +130,24 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
+            elif event.type == pygame.MOUSEMOTION:
+                travelGO.destination = pygame.mouse.get_pos()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                changable1.position = pygame.mouse.get_pos()
-                changable1._layer = random.choice(group.layers())
-                changable1.speed = random.randint(50, 150)
-                changable1.alpha = random.randint(255, 255)
+                shakingGO.position = pygame.mouse.get_pos()
+                shakingGO._layer = random.choice(group.layers())
+                shakingGO.speed = random.randint(50, 150)
+                shakingGO.alpha = random.randint(20, 255)
+                travelGO.move()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                travelGO.still()
             elif event.type == pygame.KEYDOWN:
-                changable2.position = pygame.mouse.get_pos()
-                changable2._layer = random.choice(group.layers())
-                changable2.speed = random.randint(50, 150)
-                changable2.alpha = random.randint(255, 255)
+                hipparchusGO.position = pygame.mouse.get_pos()
+                hipparchusGO._layer = random.choice(group.layers())
+                hipparchusGO.speed = random.randint(50, 150)
+                hipparchusGO.alpha = random.randint(20, 255)
+                travelGO.limiter = defaultLimiter
+            elif event.type == pygame.KEYUP:
+                travelGO.limiter = wallLimiter
 
         time_passed_seconds = clock.tick() / 1000.0
 
