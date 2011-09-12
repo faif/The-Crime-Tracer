@@ -19,6 +19,12 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+'''Borg Debisn Pattern.
+
+Implementation of the Borg Design Pattern that it is used for sharing the
+same state between different objects.
+'''
+
 try:
     from base import Base
 except (RuntimeError, ImportError) as error:
@@ -30,6 +36,7 @@ except (RuntimeError, ImportError) as error:
 __all__ = [ 'Borg' ]
 
 class Borg(Base):
+    '''The simplest Borg Implementation.'''
     __shared_state = {}
 
     def __init__(self):

@@ -20,92 +20,60 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## @package sound_mixer
-#  Sound Mixer.
-#
-# This module contains utilities which support
-# background music and small streaming sounds.
+'''Sound Mixer.
 
+This module contains utilities which support
+background music and small streaming sounds.
+'''
 
 try:
-    import constants, pygame
+    import constants, pygame, os
     from os_utils import file_path
-except ImportError as err:
-    try:
+except (RuntimeError, ImportError) as err:
         import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
-        print((': '.join((path, str(err)))))
-    # importing os failed, print a custom message...
-    except ImportError:
-        print((': '.join(("couldn't load module", str(err)))))
-    exit(2)
+        print('{0}: {1}'.format(path, err))
+        exit(MOD_FAIL_ERR)
 
-## objects imported when `from <module> import *' is used
 __all__ = ['play_music', 'play_sound']
 
-
-## the default volume of a non stream sound
 SOUND_VOLUME = 0.1
-
-## the default number of times to play a music
 MUSIC_REPEAT = -1
-
 
 # initialize the sound mixer
 pygame.mixer.pre_init(44100, -16, 2, 4096)
 
-
-## load a sound
-#
-# @param filename the filename of the sound
-# @throw SystemExit when the sound's load fails
-# @return the loaded sound
 def load_sound(filename):
-    # get the path of the filename
     fullname = file_path(filename, constants.SOUNDS_DIR)
 
-    # try to load the sound
-    try:
-        sound = pygame.mixer.Sound(fullname)
-    except:
-        print((' '.join(("Couldn't load sound:", fullname))))
+    if not os.path.isfile(fullname):
+        print('Not a file: {0}'.format(fullname))
         raise SystemExit
 
-    # return the loaded sound
+    sound = pygame.mixer.Sound(fullname)
+
     return sound
 
-
-## play a background music
-#
-# @param filename the filename of the music
-# @param repeat how many times to play the
-#               music, default is forever
-# @throw SystemExit when the load fails
 def play_music(filename, repeat=MUSIC_REPEAT):
-    # get the path of the filename
+    '''Play a background audio theme'''
     fullname = file_path(filename, constants.SOUNDS_DIR)
 
-    # try to play the music theme
     try:
         sound = pygame.mixer.music.load(fullname)
         pygame.mixer.music.play(repeat)
-    except:
-        print((' '.join(("Couldn't play music:", fullname))))
+    except pygame.error as err:
+        import os
+        path = os.path.basename(__file__)
+        print("{0}: couldn't load music: {1}".format(path, fullname))
         raise SystemExit
 
-
-## play a non streaming sound
-#
-# @param sound the sound file to play
-# @param volume the volume of the sound channel
 def play_sound(sound, volume=SOUND_VOLUME):
+    '''Play a non streaming sound.'''
     # handle the exception when the keys
     # are pressed too fast by the user
     try:
-        # play the sound given
         channel = sound.play()
-
-        # set volume as given
         channel.set_volume(volume)
-    except AttributeError:
-        print('No sound channels available!')
+    except AttributeError as err:
+        print('{0}'.format(err))

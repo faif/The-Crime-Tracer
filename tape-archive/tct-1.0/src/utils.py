@@ -20,21 +20,15 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## @package utils
-#  Generic Utilities.
-#
-# This module contains some utilities which support
-# various generic operations (type conversions, etc.).
+'''Generic Utilities.
 
-## objects imported when `from <module> import *' is used
+This module contains utilities that can be used for tracking time, etc.
+'''
+
 __all__ = ['get_time_sec']
 
-
-## get the clock's time in seconds
-#
-# @param time_passed the clock's time
-# @return the clock's time in seconds
 def get_time_sec(time_passed):
+    # TODO: unit test instead of assertion
     assert(time_passed > 0.0)
     time_sec = time_passed / 1000.0
     return time_sec

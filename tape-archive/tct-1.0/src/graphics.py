@@ -45,10 +45,10 @@ def load_image(filename, colorkey=IMAGE_COLORKEY):
 
     try:
         image = pygame.image.load(fullname)
-    except:
+    except pygame.error as err:
         import os
         path = os.path.basename(__file__)
-        print("{0}: couldn't load image: {1}".format(path, fullname))
+        print("{0}: couldn't load image: {1} ".format(path, fullname))
         raise SystemExit
 
     if image.get_alpha() is None:
@@ -69,7 +69,7 @@ def load_font(filename, size=FONT_SIZE):
 
     try:
         font = pygame.font.Font(fullname, size)
-    except:
+    except IOError as err:
         import os
         path = os.path.basename(__file__)
         print("{0}: couldn't load font: {1}".format(path, fullname))

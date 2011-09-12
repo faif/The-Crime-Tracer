@@ -20,44 +20,31 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## @package os_utils
-#  Operating System Utilities.
-#
-# This module contains some utilities which support
-# operating system operations (locating files, etc).
+'''Operating System Utilities.
 
+This module contains some utilities which support
+operating system operations (locating files, etc).
+'''
 
 try:
     import constants
     from pygame import quit
     from os import path
-except ImportError as err:
-    try:
+except (RuntimeError, ImportError) as err:
         import os
+        from constants import MOD_FAIL_ERR
         path = os.path.basename(__file__)
-        print((': '.join((path, str(err)))))
-    # importing os failed, print a custom message...
-    except ImportError:
-        print((': '.join(("couldn't load module", str(err)))))
-    exit(2)
+        print('{0}: {1}'.format(path, err))
+        exit(MOD_FAIL_ERR)
 
-## objects imported when `from <module> import *' is used
 __all__ = ['file_path', 'safe_exit']
 
 
-## create the path of a file
-#
-# @param filename the name of the file
-# @param dir the parent directory of the file
-# @return the path of the file
 def file_path(filename, dir):
     fullname = path.join(constants.RESOURCES_DIR, dir)
     fullname = path.join(fullname, filename)
     return fullname
 
-
-## perform safe exit operation
-#
 def safe_exit():
     # windows needs to close pygame's
     # subsystems first, before exit
