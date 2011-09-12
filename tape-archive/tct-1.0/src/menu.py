@@ -274,7 +274,6 @@ class Menu(State):
                 # pressed (inside the credits)
                 self._quit_option()
         else:
-            import os
             path = os.path.basename(__file__)
             print("{0}: couldn't read text file: {1}".format(path, fullname))
             raise SystemExit
