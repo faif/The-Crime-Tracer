@@ -101,14 +101,14 @@ def main():
 
     sprites.append(StaticGO("sprite/sprite-7.png", (area.center), random.randint(0, 30), random.randint(20, 255)))
 
+    hipparchusGO = HipparchusGO("sprite/sprite-8.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half, 'Random')
+
     for sprite in sprites:
         sprite.limiter = defaultLimiter
 
-    hipparchusGO = HipparchusGO("sprite/sprite-8.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half, 'Random')
     shakingGO = ShakingGO("sprite/sprite-9.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half)
     travelGO = TravelGO("sprite/sprite-1.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half)
 
-    hipparchusGO.limiter = defaultLimiter
     shakingGO.limiter = wallLimiter
     travelGO.limiter = wallLimiter
 
