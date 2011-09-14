@@ -41,8 +41,7 @@ __all__ = ['file_path', 'safe_exit']
 
 
 def file_path(filename, dir):
-    fullname = path.join(constants.RESOURCES_DIR, dir)
-    fullname = path.join(fullname, filename)
+    fullname = path.join(constants.RESOURCES_DIR, dir, filename)
     return fullname
 
 def safe_exit():
