@@ -391,14 +391,6 @@ code, kbd, samp {
   padding : 0;
 }
 
-#strip #rss {
-  float : right;
-  width : 175px;
-  margin : 0;
-  padding-left : 25px;
-  background : url("../graphics/ico-rss.png") no-repeat 0 50%;
-}
-
 #content {
   float : left;
   width : 530px;
