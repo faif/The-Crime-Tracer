@@ -3,7 +3,6 @@ try:
 
     from os import path
     from pygame.locals import *
-
     from borg import Borg
 except (RuntimeError, ImportError) as error:
         import os, constants
@@ -32,9 +31,9 @@ class ResourceManager(Borg):
         if (reuse and file in ResourceManager.__images.keys()):
             return ResourceManager.__images[file]
         else:
-            try:
-                fullpath = path.join(ResourceManager.__resources_path, ResourceManager.__images_path, file)
+            fullpath = path.join(ResourceManager.__resources_path, ResourceManager.__images_path, file)
 
+            try:
                 image = pygame.image.load(fullpath)
             except pygame.error as error:
                 raise IOError ("Couldn't load image: {0}".format(fullpath))

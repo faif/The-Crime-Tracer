@@ -93,7 +93,6 @@ def main():
     resourceManager.setImagesPath("graphics")
 
     defaultLimiter = LimiterFactory().getInstance('Default')
-    wallLimiter = LimiterFactory().getInstance('Wall')
 
     sprites = []
 
@@ -109,19 +108,15 @@ def main():
     sprites.append(StaticGO("sprite/sprite-7.png", (area.center), random.randint(0, 30), random.randint(20, 255), False))
 
     hipparchusGO = HipparchusGO("sprite/sprite-9.png", (half.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), half, 'Random')
-
-    for sprite in sprites:
-        sprite.limiter = defaultLimiter
-
     shakingGO = ShakingGO("sprite/sprite-9.png", (half.center), random.randint(0, 30), random.randint(20, 255), True, random.randint(50, 150), half)
     travelGO = TravelGO("sprite/sprite-1.png", (half.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), half)
-
-    shakingGO.limiter = wallLimiter
-    travelGO.limiter = wallLimiter
 
     sprites.append(hipparchusGO)
     sprites.append(shakingGO)
     sprites.append(travelGO)
+
+    for sprite in sprites:
+        sprite.limiter = defaultLimiter
 
     group = pygame.sprite.LayeredUpdates((sprites))
 
@@ -152,9 +147,6 @@ def main():
                 hipparchusGO._layer = random.choice(group.layers())
                 hipparchusGO.speed = random.randint(50, 150)
                 hipparchusGO.alpha = random.randint(20, 255)
-                travelGO.limiter = defaultLimiter
-            elif event.type == pygame.KEYUP:
-                travelGO.limiter = wallLimiter
 
         time_passed_seconds = clock.tick() / 1000.0
 

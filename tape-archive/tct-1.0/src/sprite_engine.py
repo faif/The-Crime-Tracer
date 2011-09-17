@@ -249,26 +249,9 @@ class DefaultLimiter(AreaLimiter):
             sprite.arrangePosition()
 
 
-class WallLimiter(AreaLimiter):
-    def run(self, sprite):
-        if not sprite.area.contains(sprite.rect):
-            if sprite.rect.bottom > sprite.area.bottom:
-                sprite.rect.bottom = sprite.area.bottom
-            elif sprite.rect.top < sprite.area.top:
-                sprite.rect.top = sprite.area.top
-
-            if sprite.rect.right > sprite.area.right:
-                sprite.rect.right = sprite.area.right
-            elif sprite.rect.left < sprite.area.left:
-                sprite.rect.left = sprite.area.left
-
-            sprite.arrangePosition()
-
-
 class LimiterFactory(Borg):
     __limiters = {
-        'Default': DefaultLimiter,
-        'Wall': WallLimiter
+        'Default': DefaultLimiter
     }
 
     def __init__(self):
