@@ -29,7 +29,6 @@ the game. Menus get user events and trigger operations.
 try:
     import random, constants, os, pygame, sound_mixer, graphics
     from os_utils import file_path, safe_exit
-    from os import path
     from utils import get_time_sec
     from sprite_engine import *
     from credits import Credits
