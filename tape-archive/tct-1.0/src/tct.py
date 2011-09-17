@@ -32,6 +32,7 @@ try:
     from command_line_parser import get_parsed_opts
     from graphics import load_image
     from game_manager import GameManager
+    from resource_manager import ResourceManager
     from base import Base
     from mvc import KeyboardController, EventManager
 except (RuntimeError, ImportError) as err:
@@ -51,6 +52,11 @@ def main():
     except IOError as e:
         print(e)
         exit(constants.FILE_ERR)
+
+    # create the resource manager and initialize it.
+    resourceManager = ResourceManager()
+    resourceManager.setResourcesPath(constants.RESOURCES_DIR)
+    resourceManager.setImagesPath(constants.GRAPHICS_DIR)
 
     # get the command line options; return the option flags
     game_opts = get_parsed_opts()

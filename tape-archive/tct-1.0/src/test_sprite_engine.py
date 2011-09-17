@@ -3,6 +3,8 @@ try:
     import pygame
     import graphics
 
+    from resource_manager import ResourceManager
+
     from sprite_engine import *
 except (RuntimeError, ImportError) as error:
     import os, constants
@@ -12,13 +14,13 @@ except (RuntimeError, ImportError) as error:
 
 
 class StaticGO(StaticSprite):
-    def __init__(self, file, position, layer, alpha):
-        super(StaticGO, self).__init__(file, position, layer, alpha)
+    def __init__(self, file, position, layer, alpha, reuse):
+        super(StaticGO, self).__init__(file, position, layer, alpha, reuse)
 
 
 class CardinalGO(CardinalSprite):
-    def __init__(self, file, position, layer, alpha, speed, area, direction):
-        super(CardinalGO, self).__init__(file, position, layer, alpha, speed, area, direction)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area, direction):
+        super(CardinalGO, self).__init__(file, position, layer, alpha, reuse, speed, area, direction)
 
     def update(self, interval):
         super(CardinalGO, self).update(interval)
@@ -30,8 +32,8 @@ class CardinalGO(CardinalSprite):
 
 
 class ShakingGO(ShakingSprite):
-    def __init__(self, file, position, layer, alpha, speed, area):
-        super(ShakingGO, self).__init__(file, position, layer, alpha, speed, area)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area):
+        super(ShakingGO, self).__init__(file, position, layer, alpha, reuse, speed, area)
 
     def update(self, interval):
         super(ShakingGO, self).update(interval)
@@ -43,8 +45,8 @@ class ShakingGO(ShakingSprite):
 
 
 class HipparchusGO(HipparchusSprite):
-    def __init__(self, file, position, layer, alpha, speed, area, angle):
-        super(HipparchusGO, self).__init__(file, position, layer, alpha, speed, area, angle)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area, angle):
+        super(HipparchusGO, self).__init__(file, position, layer, alpha, reuse, speed, area, angle)
 
     def update(self, interval):
         super(HipparchusGO, self).update(interval)
@@ -56,8 +58,8 @@ class HipparchusGO(HipparchusSprite):
 
 
 class TravelGO(TravelSprite):
-    def __init__(self, file, position, layer, alpha, speed, area):
-        super(TravelGO, self).__init__(file, position, layer, alpha, speed, area)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area):
+        super(TravelGO, self).__init__(file, position, layer, alpha, reuse, speed, area)
 
     def update(self, interval):
         super(TravelGO, self).update(interval)
@@ -77,37 +79,42 @@ class TravelGO(TravelSprite):
 def main():
     pygame.init()
 
-    SCREEN_SIZE = [800, 600]
+    SCREEN_SIZE = (800, 600)
 
     screen = pygame.display.set_mode(SCREEN_SIZE)
 
     area = screen.get_rect()
 
-    half = area.inflate((-SCREEN_SIZE[0]/2, -SCREEN_SIZE[1]/2))
+    half = area.inflate((-SCREEN_SIZE[0]/2., -SCREEN_SIZE[1]/2.))
+
+    resourceManager = ResourceManager()
+
+    resourceManager.setResourcesPath("resources")
+    resourceManager.setImagesPath("graphics")
 
     defaultLimiter = LimiterFactory().getInstance('Default')
     wallLimiter = LimiterFactory().getInstance('Wall')
 
     sprites = []
 
-    sprites.append(ShakingGO("sprite/sprite-1.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area))
-    sprites.append(ShakingGO("sprite/sprite-2.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area))
+    sprites.append(ShakingGO("sprite/sprite-1.png", (area.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), area))
+    sprites.append(ShakingGO("sprite/sprite-2.png", (area.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), area))
 
-    sprites.append(CardinalGO("sprite/sprite-3.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'West'))
-    sprites.append(CardinalGO("sprite/sprite-4.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'North'))
+    sprites.append(CardinalGO("sprite/sprite-3.png", (area.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), area, 'West'))
+    sprites.append(CardinalGO("sprite/sprite-4.png", (area.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), area, 'North'))
 
-    sprites.append(HipparchusGO("sprite/sprite-5.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'Random'))
-    sprites.append(HipparchusGO("sprite/sprite-6.png", (area.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), area, 'Random'))
+    sprites.append(HipparchusGO("sprite/sprite-5.png", (area.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), area, 'Random'))
+    sprites.append(HipparchusGO("sprite/sprite-6.png", (area.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), area, 'Random'))
 
-    sprites.append(StaticGO("sprite/sprite-7.png", (area.center), random.randint(0, 30), random.randint(20, 255)))
+    sprites.append(StaticGO("sprite/sprite-7.png", (area.center), random.randint(0, 30), random.randint(20, 255), False))
 
-    hipparchusGO = HipparchusGO("sprite/sprite-8.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half, 'Random')
+    hipparchusGO = HipparchusGO("sprite/sprite-9.png", (half.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), half, 'Random')
 
     for sprite in sprites:
         sprite.limiter = defaultLimiter
 
-    shakingGO = ShakingGO("sprite/sprite-9.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half)
-    travelGO = TravelGO("sprite/sprite-1.png", (half.center), random.randint(0, 30), random.randint(20, 255), random.randint(50, 150), half)
+    shakingGO = ShakingGO("sprite/sprite-9.png", (half.center), random.randint(0, 30), random.randint(20, 255), True, random.randint(50, 150), half)
+    travelGO = TravelGO("sprite/sprite-1.png", (half.center), random.randint(0, 30), random.randint(20, 255), False, random.randint(50, 150), half)
 
     shakingGO.limiter = wallLimiter
     travelGO.limiter = wallLimiter
@@ -118,7 +125,7 @@ def main():
 
     group = pygame.sprite.LayeredUpdates((sprites))
 
-    background = graphics.load_image("sprite/background.jpg")[0]
+    background = ResourceManager().getImage("sprite/background.jpg")
 
     screen.blit(background, (0, 0))
 

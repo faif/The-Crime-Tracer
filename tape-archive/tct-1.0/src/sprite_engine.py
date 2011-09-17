@@ -29,6 +29,8 @@ try:
     from base import Base
     from borg import Borg
 
+    from resource_manager import ResourceManager
+
     from gameobjects.vector2 import Vector2
 except (RuntimeError, ImportError) as error:
     import os, constants
@@ -280,9 +282,10 @@ class LimiterFactory(Borg):
 
 
 class StaticSprite(pygame.sprite.Sprite, Base):
-    def __init__(self, file, position, layer, alpha):
+    def __init__(self, file, position, layer, alpha, reuse):
         super(StaticSprite, self).__init__()
 
+        self.reuse = reuse
         self.file = file
         self.position = position
         self._layer = layer
@@ -296,7 +299,7 @@ class StaticSprite(pygame.sprite.Sprite, Base):
 
     @file.setter
     def file(self, file):
-        self._image = graphics.load_image(file)[0]
+        self._image = ResourceManager().getImage(file, reuse = self._reuse)
         self._file = file
 
     @property
@@ -326,6 +329,14 @@ class StaticSprite(pygame.sprite.Sprite, Base):
         self._image.set_alpha(AlphaHandler().handle(alpha))
 
     @property
+    def reuse(self):
+        return self._reuse
+
+    @reuse.setter
+    def reuse(self, reuse):
+        self._reuse = reuse
+
+    @property
     def image(self):
         return self._image
 
@@ -341,8 +352,8 @@ class StaticSprite(pygame.sprite.Sprite, Base):
 
 
 class DynamicSprite(StaticSprite):
-    def __init__(self, file, position, layer, alpha, speed, area):
-        super(DynamicSprite, self).__init__(file, position, layer, alpha)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area):
+        super(DynamicSprite, self).__init__(file, position, layer, alpha, reuse)
 
         self.limiter = None
         self.speed = speed
@@ -379,8 +390,8 @@ class DynamicSprite(StaticSprite):
 class TravelSprite(DynamicSprite):
     __arrivalThreshold = 8
 
-    def __init__(self, file, position, layer, alpha, speed, area):
-        super(TravelSprite, self).__init__(file, position, layer, alpha, speed, area)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area):
+        super(TravelSprite, self).__init__(file, position, layer, alpha, reuse, speed, area)
 
         self.stop()
 
@@ -424,8 +435,8 @@ class TravelSprite(DynamicSprite):
 
 
 class CardinalSprite(DynamicSprite):
-    def __init__(self, file, position, layer, alpha, speed, area, direction):
-        super(CardinalSprite, self).__init__(file, position, layer, alpha, speed, area)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area, direction):
+        super(CardinalSprite, self).__init__(file, position, layer, alpha, reuse, speed, area)
 
         self.direction = direction
 
@@ -446,8 +457,8 @@ class CardinalSprite(DynamicSprite):
 class ShakingSprite(CardinalSprite):
     __original = 'Random'
 
-    def __init__(self, file, position, layer, alpha, speed, area):
-        super(ShakingSprite, self).__init__(file, position, layer, alpha, speed, area, ShakingSprite.__original)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area):
+        super(ShakingSprite, self).__init__(file, position, layer, alpha, reuse, speed, area, ShakingSprite.__original)
 
     def update(self, interval):
         self.direction = ShakingSprite.__original
@@ -456,8 +467,8 @@ class ShakingSprite(CardinalSprite):
 
 
 class HipparchusSprite(DynamicSprite):
-    def __init__(self, file, position, layer, alpha, speed, area, angle):
-        super(HipparchusSprite, self).__init__(file, position, layer, alpha, speed, area)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area, angle):
+        super(HipparchusSprite, self).__init__(file, position, layer, alpha, reuse, speed, area)
 
         self.angle = angle
 

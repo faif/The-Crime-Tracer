@@ -29,6 +29,7 @@ the game. Menus get user events and trigger operations.
 try:
     import random, constants, os, pygame, sound_mixer, graphics
     from os_utils import file_path, safe_exit
+    from os import path
     from utils import get_time_sec
     from sprite_engine import *
     from credits import Credits
@@ -63,8 +64,8 @@ SOUND_VOL = 0.2
 MAX_ALPHA = 255
 
 class MenuSprite(HipparchusSprite):
-    def __init__(self, file, position, layer, alpha, speed, area, angle):
-        super(MenuSprite, self).__init__(file, position, layer, alpha, speed, area, angle)
+    def __init__(self, file, position, layer, alpha, reuse, speed, area, angle):
+        super(MenuSprite, self).__init__(file, position, layer, alpha, reuse, speed, area, angle)
 
     def update(self, interval):
         super(MenuSprite, self).update(interval)
@@ -138,7 +139,7 @@ class Menu(State):
         sprite_limiter = LimiterFactory().getInstance('Default')
         for i in range(sprites_number):
             sprite = MenuSprite(constants.FILES['graphics']['menu']['share']['anim'][i],
-                                (sprite_area.center), i, MAX_ALPHA, SPRITE_SPEED,
+                                (sprite_area.center), i, MAX_ALPHA, False, SPRITE_SPEED,
                                 sprite_area, 'Random')
             sprite.limiter = sprite_limiter
             self.sprites.add(sprite)
