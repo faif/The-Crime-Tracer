@@ -101,5 +101,5 @@ class FSM(Base):
         if not (new_state_name in self.states):
             raise StateError('Invalid state: {0}'.format(new_state_name))
 
-            self.active_state = self.states[new_state_name]
-            self.active_state.entry_actions()
+        self.active_state = self.states[new_state_name]
+        self.active_state.entry_actions()
