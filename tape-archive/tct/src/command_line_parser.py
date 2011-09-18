@@ -29,6 +29,7 @@ try:
     import argparse
     import constants
     from time import strftime, gmtime
+    from os_utils import safe_exit
 except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
@@ -74,11 +75,13 @@ class VersionAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         for line in VERSION:
             print(line)
+        safe_exit()
 
 class CopyrightAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         for line in LICENSE:
             print(line)
+        safe_exit()
 
 def get_parsed_opts():
     '''create a parser and return the namespace with the parsed options'''
