@@ -229,7 +229,7 @@ class Credits(Base):
             bg_cont = self.screen.blit(self.credits_bg, (self.bg_x_pos +
                              self.credits_bg.get_width(), 0))
 
-        [item.redraw() for item in self.text_items]
+        tuple(item.redraw() for item in self.text_items)
 
         # draw the frame of the window
         fr = self.screen.blit(self.window_frame, (0, 0))
