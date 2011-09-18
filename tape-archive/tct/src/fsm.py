@@ -38,13 +38,16 @@ except (RuntimeError, ImportError) as err:
 
 __all__ = ['State', 'FSM']
 
+class InitError(ValueError):
+    '''Raised when a wrong argument is passed on __init__'''
+    
 class State(Base):
     '''This class is the template of an FSM's state.
     It can be used by several FSM implementations.'''
 
     def __init__(self, name):
-        # TODO unit test instead of assertion
-        assert(name is not '')
+        if not name:
+            raise InitError('Invalid state name: {0}'.format(name))
         self.name = name
 
     def do_actions(self):
@@ -55,13 +58,15 @@ class State(Base):
 
     def entry_actions(self):
         '''what to do before enabling the state'''
-        pass
 
     def exit_actions(self):
         '''what to do after disabling the state'''
 
     def __str__(self):
         return self.name
+
+class StateError(ValueError):
+    '''raised when invalid states are passed as arguments'''
 
 class FSM(Base):
     '''this class is the skeleton of an FSM'''
@@ -93,9 +98,8 @@ class FSM(Base):
         if self.active_state:
             self.active_state.exit_actions()
 
-        # make sure that the given state exists
-        # TODO unit test instead of assertion
-        assert (new_state_name in self.states)
+        if not (new_state_name in self.states):
+            raise StateError('Invalid state: {0}'.format(new_state_name))
 
-        self.active_state = self.states[new_state_name]
-        self.active_state.entry_actions()
+            self.active_state = self.states[new_state_name]
+            self.active_state.entry_actions()
