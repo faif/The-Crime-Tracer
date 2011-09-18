@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<gtodo>
+  <category title="Development" place="0">
+    <item>
+      <attribute id="1316361261" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316361332"/>
+      <summary>Refactor: credits.py, kezmenu.py, menu.py</summary>
+      <comment>Refactor modules with MVC design pattern.</comment>
+    </item>
+    <item>
+      <attribute id="1316361358" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316361358"/>
+      <summary>Error printing issue</summary>
+      <comment>The error messages should always be printed - regardless of the verbose flag.</comment>
+    </item>
+    <item>
+      <attribute id="1316361306" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316361360"/>
+      <summary>Refactoring Listeners</summary>
+      <comment>At the moment all listeners are notified about all kinds of messages. This should not be the case; only the relevant listeners should be informed each time a new event is generated.</comment>
+    </item>
+    <item>
+      <attribute id="1316361386" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316361386"/>
+      <summary>Informative printing issue</summary>
+      <comment>Informative messages should be printed only when the verbose flag is off.</comment>
+    </item>
+    <item>
+      <attribute id="1316361436" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316361436"/>
+      <summary>Features checking in the Game Design Document</summary>
+      <comment>Some features described on the design document might be outdated (for example 1024x768 resolution, both keyboard and mouse support to control the character). Other are too abstract and perhaps not necessary (for example character's strengh and mood).</comment>
+    </item>
+    <item>
+      <attribute id="1316361461" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316361461"/>
+      <summary>Use only docstrings for internal documentation</summary>
+      <comment>Use docstrings instead of doxygen, since they can be used for providing online documentation (for example through the interactive shell)</comment>
+    </item>
+    <item>
+      <attribute id="1316361491" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316361564"/>
+      <summary>Should we use I18N in the game?</summary>
+      <comment>Maybe would be necessary for characters discussions.</comment>
+    </item>
+    <item>
+      <attribute id="1316361503" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316361605"/>
+      <summary>Should we refactor long methods?</summary>
+      <comment>We have selected to work with OO, DRY, design patterns and modularity.</comment>
+    </item>
+  <item><attribute id="1316362093" priority="2" done="0" start_date="734398" enddate="99999999" notify="0" endtime="-60" last_edited="1316362093"/><summary>Version information</summary><comment>We should place version information at only one place!
+
+Also we need to create a folder structure which can help us to maintain releases.
+
+I believe that the following structure is nice for us to work:
+
+DEV
+    Project1
+        DEV
+            source code
+            setup installation
+            resources
+            shared libraries
+            documentations
+        MAIN
+            source code
+            setup installation
+            resources
+            shared libraries
+            documentations
+        DEV-Faif
+            source code
+            setup installation
+            resources
+            shared libraries
+            documentations
+        DEV-Lafs
+            source code
+            setup installation
+            resources
+            shared libraries
+            documentations
+    Project2
+    Project3
+QA
+    Project1
+        Functional Testing
+        Unit Tests
+        Test Use Cases
+    Project2
+    Project3
+REL
+    Release 1
+    Release 2
+    Release 3</comment></item></category>
+  <category title="Quality Assurance" place="1"/>
+</gtodo>
