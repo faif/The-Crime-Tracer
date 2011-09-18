@@ -27,6 +27,7 @@ This module contains the game's intro screen implementation.
 try:
     import constants, pygame, sound_mixer, graphics
     from intro_cut_scene import IntroCutScene
+    from resource_manager import ResourceManager
     from fsm import State
 except (RuntimeError, ImportError) as err:
         import os
@@ -48,9 +49,9 @@ class Intro(State):
         # intro slides
         slide_num = len(constants.FILES['graphics']['intro']['slides'])
         self.slides = [
-            graphics.load_image(
+            ResourceManager().getImage(
                 constants.FILES['graphics']['intro']
-                ['slides'][i])[0] for i in range(slide_num)
+                ['slides'][i]) for i in range(slide_num)
             ]
         self.cutscenes = IntroCutScene(self.slides)
 

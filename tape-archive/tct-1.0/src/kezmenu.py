@@ -30,7 +30,7 @@ class to create, display and handle menus.
 try:
     import constants, pygame
     from sound_mixer import play_sound, load_sound
-    from graphics import load_image
+    from resource_manager import ResourceManager
     from base import Base
 except (RuntimeError, ImportError) as err:
         import os
@@ -98,8 +98,8 @@ class KezMenu(Base):
              constants.FILES['sounds']['menu']['share']['sel'][0])
 
         # set the default graphic to display before the option label
-        self.focus_graphic = load_image(
-             constants.FILES['graphics']['menu']['share']['focus'][0])[0]
+        self.focus_graphic = ResourceManager().getImage(
+            constants.FILES['graphics']['menu']['share']['focus'][0])
 
     def _fix_size(self):
         '''Fix the menu size (called when the font is changed).'''

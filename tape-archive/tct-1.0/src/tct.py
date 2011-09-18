@@ -30,9 +30,8 @@ and then starts the game manager for the rest things.
 try:
     import os, sys, pygame, constants
     from command_line_parser import get_parsed_opts
-    from graphics import load_image
-    from game_manager import GameManager
     from resource_manager import ResourceManager
+    from game_manager import GameManager
     from base import Base
     from mvc import KeyboardController, EventManager
 except (RuntimeError, ImportError) as err:
@@ -126,8 +125,8 @@ class MainGUIView(Base):
             (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT),
             pygame.FULLSCREEN if self.game_opts.fullscreen else 0)
         pygame.display.set_caption(GAME_WINDOW_TITLE)
-        pygame.display.set_icon(load_image(
-                constants.FILES['graphics']['window']['icon'][0])[0])
+        pygame.display.set_icon(ResourceManager().getImage(
+            constants.FILES['graphics']['window']['icon'][0]))
 
         pygame.mouse.set_visible(False)
 

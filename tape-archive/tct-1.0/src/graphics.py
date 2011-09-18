@@ -21,12 +21,11 @@
 
 '''Graphics Utilities.
 
-This module contains graphics utilities for loading graphics, fonts, etc.
+This module contains graphics utilities for loading fonts, etc.
 '''
 
 try:
     import pygame, constants
-    from pygame.locals import RLEACCEL
     from os_utils import file_path
 except (RuntimeError, ImportError) as err:
         import os
@@ -35,34 +34,9 @@ except (RuntimeError, ImportError) as err:
         print('{0}: {1}'.format(path, err))
         exit(MOD_FAIL_ERR)
 
-__all__ = ['load_image', 'load_font', 'handle_mouse_cursor']
+__all__ = ['load_font', 'handle_mouse_cursor']
 
 FONT_SIZE = 17
-IMAGE_COLORKEY = None
-
-def load_image(filename, colorkey=IMAGE_COLORKEY):
-    fullname = file_path(filename, constants.GRAPHICS_DIR)
-
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error as err:
-        import os
-        path = os.path.basename(__file__)
-        print("{0}: couldn't load image: {1} ".format(path, fullname))
-        raise SystemExit
-
-    if image.get_alpha() is None:
-        image = image.convert()
-    else:
-        image = image.convert_alpha()
-
-    if colorkey:
-        if colorkey is -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey, RLEACCEL)
-
-    return image, image.get_rect()
-
 
 def load_font(filename, size=FONT_SIZE):
     fullname = file_path(filename, constants.FONTS_DIR)

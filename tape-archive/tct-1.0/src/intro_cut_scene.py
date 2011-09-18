@@ -29,6 +29,7 @@ try:
     import constants, pygame, graphics
     from pygame.locals import *
     from os_utils import safe_exit
+    from resource_manager import ResourceManager
     from base import Base
     from mvc import SafeExitEvent, EventManager, EscapeEvent, ReturnEvent
 except (RuntimeError, ImportError) as err:
@@ -135,8 +136,7 @@ class IntroCutSceneGUIView(Base):
         assert(len(slides) > 0)
         self.slides = slides
 
-        self.blank = graphics.load_image(
-            constants.FILES['graphics']['intro']['blank'][0])[0].convert()
+        self.blank = ResourceManager().getImage(constants.FILES['graphics']['intro']['blank'][0])
         self.alphavalue = MAX_ALPHA
 
     def notify(self, event):

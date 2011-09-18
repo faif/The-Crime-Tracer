@@ -30,6 +30,7 @@ try:
     import random, constants, os, pygame, sound_mixer, graphics
     from os_utils import file_path, safe_exit
     from utils import get_time_sec
+    from resource_manager import ResourceManager
     from sprite_engine import *
     from credits import Credits
     from kezmenu import KezMenu
@@ -87,18 +88,16 @@ class Menu(State):
 
         pygame.key.set_repeat(MENU_KEY_DEL, MENU_KEY_INT)
 
-        self.menu_main_bg = graphics.load_image(
-            constants.FILES['graphics']['menu']['main']['bg'][0])[0]
-        self.menu_settings_bg = graphics.load_image(
-            constants.FILES['graphics']['menu']['share']['bg'][0])[0]
-        self.menu_box_bg = graphics.load_image(
-            constants.FILES['graphics']['menu']['settings']['box'][0])[0]
-
-        self.window_frame = graphics.load_image(
-            constants.FILES['graphics']['menu']['share']['frame'][0])[0]
-
-        self.mouse_cursor = graphics.load_image(
-            constants.FILES['graphics']['menu']['share']['cursor'][0])[0]
+        self.menu_main_bg = ResourceManager().getImage(
+            constants.FILES['graphics']['menu']['main']['bg'][0])
+        self.menu_settings_bg = ResourceManager().getImage(
+            constants.FILES['graphics']['menu']['share']['bg'][0])
+        self.menu_box_bg = ResourceManager().getImage(
+            constants.FILES['graphics']['menu']['settings']['box'][0])
+        self.window_frame = ResourceManager().getImage(
+            constants.FILES['graphics']['menu']['share']['frame'][0])
+        self.mouse_cursor = ResourceManager().getImage(
+            constants.FILES['graphics']['menu']['share']['cursor'][0])
 
         self.select_option_snd = sound_mixer.load_sound(
             constants.FILES['sounds']['menu']['share']['sel'][0])

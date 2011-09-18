@@ -30,7 +30,7 @@ try:
     from pygame.locals import *
     from base import Base
     from sound_mixer import load_sound, play_sound
-    from graphics import load_image, load_font
+    from graphics import load_font
     from utils import get_time_sec
 except (RuntimeError, ImportError) as err:
         import os

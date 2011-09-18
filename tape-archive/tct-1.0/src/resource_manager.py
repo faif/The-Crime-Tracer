@@ -21,7 +21,7 @@ class ResourceManager(Borg):
     def setResourcesPath(self, path):
         ResourceManager.__resources_path = path
 
-    def getImage(self, file, colorKey = -1, reuse = False):
+    def getImage(self, file, colorKey = None, reuse = False):
         if not ResourceManager.__resources_path:
             raise ValueError ("ResourceManager.setResourcesPath() not called yet.")
 
