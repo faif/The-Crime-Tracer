@@ -48,8 +48,7 @@ def load_sound(filename):
     fullname = file_path(filename, constants.SOUNDS_DIR)
 
     if not os.path.isfile(fullname):
-        print('Not a file: {0}'.format(fullname))
-        raise SystemExit
+        raise SystemExit('Not a file: {0}'.format(fullname))
 
     sound = pygame.mixer.Sound(fullname)
 
@@ -65,8 +64,7 @@ def play_music(filename, repeat=MUSIC_REPEAT):
     except pygame.error as err:
         import os
         path = os.path.basename(__file__)
-        print("{0}: couldn't load music: {1}".format(path, fullname))
-        raise SystemExit
+        raise SystemExit("{0}: couldn't load music: {1}".format(path, fullname))
 
 def play_sound(sound, volume=SOUND_VOLUME):
     '''Play a non streaming sound.'''

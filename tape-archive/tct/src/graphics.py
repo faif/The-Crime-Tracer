@@ -46,8 +46,7 @@ def load_font(filename, size=FONT_SIZE):
     except IOError as err:
         import os
         path = os.path.basename(__file__)
-        print("{0}: couldn't load font: {1}".format(path, fullname))
-        raise SystemExit
+        raise SystemExit("{0}: couldn't load font: {1}".format(path, fullname))
 
     return font
 
