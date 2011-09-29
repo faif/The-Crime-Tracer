@@ -122,6 +122,9 @@ class IntroCutSceneController:
         elif isinstance(event, SafeExitEvent):
             safe_exit()
 
+class SlideLenError(ValueError):
+    '''Raised when then length of the slides is not correct'''
+
 class IntroCutSceneGUIView(Base):
     '''This class is responsible for initialising all the intro cut scene 
     GUI-related stuff and handling the related events.
@@ -132,8 +135,10 @@ class IntroCutSceneGUIView(Base):
 
         self.screen = pygame.display.get_surface()
 
-        # TODO unit test instead of assertion
-        assert(len(slides) > 0)
+        sl = len(slides)
+        if not sl:
+            raise SlideLenError('Incorrect slide length: {0}'.format(sl))
+
         self.slides = slides
 
         self.blank = ResourceManager().getImage(constants.FILES['graphics']['intro']['blank'][0])
