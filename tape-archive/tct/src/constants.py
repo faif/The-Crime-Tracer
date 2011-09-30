@@ -40,6 +40,7 @@ FILE_ERR = 3
 GAME_VERSION = '1.0'
 GAME_TITLE = 'the crime tracer, the suspect passer-by'.title()
 GAME_PACKAGE = '{0} (VER-{1})'.format(GAME_TITLE,  GAME_VERSION)
+CFG_XMLNS = 'https://gitorious.org/+tct-developers'
 
 '''basic directories'''
 RESOURCES_DIR = 'resources'
