@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tct xmlns="https://gitorious.org/+tct-developers" xml:lang="en" version="1.0">
+  <files dir="resources">
+    <graphics dir="graphics">
+      <intro dir="intro">
+	<slides>
+	  <slide>ct-intro-slide-0.jpg</slide>
+	  <slide>ct-intro-slide-1.jpg</slide>
+	  <slide>ct-intro-slide-2.jpg</slide>
+	</slides>
+	<blank>ct-intro-blank-0.jpg</blank>
+      </intro>
+      <menu dir="menu">
+	<main><bg>ct-menu-main-bg-0.jpg</bg></main>
+      </menu>
+    </graphics>
+  </files>
+</tct>
