@@ -28,7 +28,6 @@ of the finite state machine of the game.
 
 try:
     import constants
-    from base import Base
 except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
@@ -41,7 +40,7 @@ __all__ = ['State', 'FSM']
 class InitError(ValueError):
     '''Raised when a wrong argument is passed on __init__'''
     
-class State(Base):
+class State:
     '''This class is the template of an FSM's state.
     It can be used by several FSM implementations.'''
 
@@ -68,7 +67,7 @@ class State(Base):
 class StateError(ValueError):
     '''raised when invalid states are passed as arguments'''
 
-class FSM(Base):
+class FSM:
     '''this class is the skeleton of an FSM'''
 
     def __init__(self):

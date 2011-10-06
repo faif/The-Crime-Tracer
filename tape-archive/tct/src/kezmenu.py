@@ -31,7 +31,6 @@ try:
     import constants, pygame
     from sound_mixer import play_sound, load_sound
     from resource_manager import ResourceManager
-    from base import Base
 except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
@@ -45,7 +44,7 @@ FOCUS_IMAGE_SPACE = 8
 FONT_SIZE = 32
 FOCUS_SOUND_VOL = 0.2
 
-class KezMenu(Base):
+class KezMenu(object):
 
     def __init__(self, game_opts, *menu_opts):
         # create a programmer friendly mapping stucture of the menu options

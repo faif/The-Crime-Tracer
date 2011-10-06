@@ -25,17 +25,9 @@ Implementation of the Borg Design Pattern that it is used for sharing the
 same state between different objects.
 '''
 
-try:
-    from base import Base
-except (RuntimeError, ImportError) as error:
-    import os, constants
-    path = os.path.basename(__file__)
-    print('{0}: {1}'.format(path, error))
-    exit(constants.MOD_FAIL_ERR)
-
 __all__ = [ 'Borg' ]
 
-class Borg(Base):
+class Borg(object):
     '''The simplest Borg Implementation.'''
     __shared_state = {}
 

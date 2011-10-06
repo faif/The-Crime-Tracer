@@ -32,7 +32,6 @@ try:
     from command_line_parser import get_parsed_opts
     from resource_manager import ResourceManager
     from game_manager import GameManager
-    from base import Base
     from mvc import KeyboardController, EventManager
 except (RuntimeError, ImportError) as err:
         import os
@@ -107,7 +106,7 @@ class MainController:
             self.main_loop_running = False
 
 
-class MainGUIView(Base):
+class MainGUIView:
     '''This class is responsible for initialising all the GUI subsystems and handling the related events.'''
 
     def __init__(self, manager, game_opts):

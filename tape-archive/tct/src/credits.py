@@ -28,7 +28,6 @@ This module contains the menu's credits screen implementation.
 try:
     import constants, pygame
     from pygame.locals import *
-    from base import Base
     from sound_mixer import load_sound, play_sound
     from graphics import load_font
     from utils import get_time_sec
@@ -70,7 +69,7 @@ SOUND_VOL = 0.2
 SCROLL_SPEED = 50
 SCROLL_FACTOR = 100
 
-class TextItem(Base):
+class TextItem:
 
     def __init__(self, parent, surface, text, vertical,
                  size=FONT_SIZE, color=FONT_COLOR):
@@ -93,7 +92,7 @@ class TextItem(Base):
         # blit the text at x, y on the surface given
         self.surface.blit(self.text, (self.x, y))
 
-class Credits(Base):
+class Credits:
 
     def __init__(self, screen, game_opts, frame, bg, sound, textfile):
         self.screen = screen

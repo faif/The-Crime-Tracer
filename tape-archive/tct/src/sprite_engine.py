@@ -26,7 +26,6 @@ try:
     import pygame
     import graphics
 
-    from base import Base
     from borg import Borg
 
     from resource_manager import ResourceManager
@@ -53,7 +52,7 @@ __all__ = [
           ]
 
 
-class MinimumMaximum(Base):
+class MinimumMaximum(object):
     def __init__(self, type, minimum, maximum):
         if not isinstance(minimum, type):
             raise ValueError("Minimum value ({0}) should be type of ({1})".format(minimum, type))
@@ -84,7 +83,8 @@ class MinimumMaximum(Base):
 
 class ValueBounder(MinimumMaximum):
     def __init__(self, type, minimum, maximum):
-        super(ValueBounder, self).__init__(type, minimum, maximum)
+        # super(ValueBounder, self).__init__(type, minimum, maximum)
+        MinimumMaximum.__init__(self, type, minimum, maximum)
 
     def check(self, value):
         if isinstance(value, self.type):
@@ -228,7 +228,7 @@ class Cardinal(Borg):
         raise ValueError("Incorrect Cardinal unit vector ({0})".format(vector))
 
 
-class AreaLimiter(Base):
+class AreaLimiter(object):
     def run(self, sprite):
         pass
 
@@ -264,7 +264,7 @@ class LimiterFactory(Borg):
             raise ValueError("Incorrect limiter type: {0}".format(type))
 
 
-class StaticSprite(pygame.sprite.Sprite, Base):
+class StaticSprite(pygame.sprite.Sprite):
     def __init__(self, file, position, layer, alpha, reuse):
         super(StaticSprite, self).__init__()
 

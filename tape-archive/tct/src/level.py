@@ -21,7 +21,6 @@
 
 try:
     import constants
-    from base import Base
     from fsm import FSM, State
     from os_utils import safe_exit
 except (RuntimeError, ImportError) as err:
@@ -34,7 +33,7 @@ except (RuntimeError, ImportError) as err:
 __all__ = ['LevelFactory']
 
 
-class LevelFactory(Base):
+class LevelFactory:
     def create_level(self, name):
         # find out which factory to use
         if (name == constants.SCENES['level_one']):

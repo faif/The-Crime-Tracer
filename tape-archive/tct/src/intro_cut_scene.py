@@ -30,7 +30,6 @@ try:
     from pygame.locals import *
     from os_utils import safe_exit
     from resource_manager import ResourceManager
-    from base import Base
     from mvc import SafeExitEvent, EventManager, EscapeEvent, ReturnEvent
 except (RuntimeError, ImportError) as err:
         import os
@@ -125,7 +124,7 @@ class IntroCutSceneController:
 class SlideLenError(ValueError):
     '''Raised when then length of the slides is not correct'''
 
-class IntroCutSceneGUIView(Base):
+class IntroCutSceneGUIView:
     '''This class is responsible for initialising all the intro cut scene 
     GUI-related stuff and handling the related events.
     '''
@@ -160,7 +159,7 @@ class IntroCutSceneGUIView(Base):
         up_l = (s, bs)
         pygame.display.update(up_l)
 
-class IntroCutScene(Base):
+class IntroCutScene:
     def __init__(self, slides):
         self.event_manager = EventManager()
         self.gui_view = IntroCutSceneGUIView(self.event_manager, slides)

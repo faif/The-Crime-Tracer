@@ -33,7 +33,6 @@ try:
     from intro import Intro
     from menu import Menu
     from borg import Borg
-    from base import Base
     from level import LevelFactory
 except (RuntimeError, ImportError) as err:
         import os

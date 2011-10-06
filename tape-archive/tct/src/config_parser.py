@@ -1,6 +1,5 @@
 try:
     import constants
-    from base import Base
 except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
@@ -16,8 +15,8 @@ except ImportError:
 
 __all__ = ['ConfigParser']
 
-class ConfigParser(Base):
-    
+class ConfigParser:
+
     def __init__(self, fullname, xmlns):
         try:
             self.cfg = etree.parse(fullname)

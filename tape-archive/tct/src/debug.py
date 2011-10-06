@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#    Generic Python functions.
+#    Functions useful for debugging.
 #
 #    This file is part of The Crime Tracer.
 #
@@ -19,15 +19,15 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-'''Generic Python functions.
+'''Debugging functions.
 
-This module contains functions that are generic enough to be useful in more 
-than one (sub)classes. 
+This module contains functions that can print/return useful debugging
+information.
 '''
 
-__all__ = ['Base']
+__all__ = ['Debug']
 
-class Base(object):
+class Debug:
 
     def print_attrs(self):
         '''print all the attributes of an object'''
