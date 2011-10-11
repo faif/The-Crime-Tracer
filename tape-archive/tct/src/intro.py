@@ -29,6 +29,8 @@ try:
     from intro_cut_scene import IntroCutScene
     from resource_manager import ResourceManager
     from fsm import State
+    from config_parser import ConfigParser
+    from os import path
 except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
@@ -45,14 +47,14 @@ class Intro(State):
     def __init__(self, game_opts):
         State.__init__(self, constants.SCENES['intro'])
         self.game_opts = game_opts
+        parser = ConfigParser(constants.MAIN_CFG, constants.CFG_XMLNS)
 
         # intro slides
-        slide_num = len(constants.FILES['graphics']['intro']['slides'])
-        self.slides = [
-            ResourceManager().getImage(
-                constants.FILES['graphics']['intro']
-                ['slides'][i]) for i in range(slide_num)
-            ]
+        dir_name = parser.first_match('intro').attrib
+        slides = [i.text for i in parser.all_matches('slide')]
+        slides = [path.join(dir_name['dir'], i) for i in slides]
+        slide_num = len(slides)
+        self.slides = [ResourceManager().getImage(slides[i]) for i in range(slide_num)]
         self.cutscenes = IntroCutScene(self.slides)
 
         pygame.mixer.music.set_volume(0.0)

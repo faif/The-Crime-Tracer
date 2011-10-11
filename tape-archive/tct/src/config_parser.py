@@ -1,5 +1,6 @@
 try:
     import constants
+    from borg import Borg
 except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
@@ -15,7 +16,7 @@ except ImportError:
 
 __all__ = ['ConfigParser']
 
-class ConfigParser:
+class ConfigParser(Borg):
 
     def __init__(self, fullname, xmlns):
         try:

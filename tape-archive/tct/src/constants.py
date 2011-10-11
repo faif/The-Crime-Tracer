@@ -41,6 +41,7 @@ GAME_VERSION = '1.0'
 GAME_TITLE = 'the crime tracer, the suspect passer-by'.title()
 GAME_PACKAGE = '{0} (VER-{1})'.format(GAME_TITLE,  GAME_VERSION)
 CFG_XMLNS = 'https://gitorious.org/+tct-developers'
+MAIN_CFG = 'tct.xml'
 
 '''basic directories'''
 RESOURCES_DIR = 'resources'
@@ -64,9 +65,6 @@ SCENES = { 'intro':'introduction', 'menu':'main menu', 'level_one': 'first level
 '''game resource filenames'''
 FILES = { 'graphics': {
             'intro': {
-                'slides': (path.join(INTRO_DIR, 'ct-intro-slide-0.jpg'),
-                           path.join(INTRO_DIR, 'ct-intro-slide-1.jpg'),
-                           path.join(INTRO_DIR, 'ct-intro-slide-2.jpg')),
                 'blank': [path.join(INTRO_DIR, 'ct-intro-blank-0.jpg')]
             },
             'menu': {
