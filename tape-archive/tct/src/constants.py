@@ -63,10 +63,8 @@ SCREEN_HEIGHT = 600
 SCENES = { 'intro':'introduction', 'menu':'main menu', 'level_one': 'first level' }
 
 '''game resource filenames'''
-FILES = { 'graphics': {
-            'intro': {
-                'blank': [path.join(INTRO_DIR, 'ct-intro-blank-0.jpg')]
-            },
+FILES = { 
+'graphics': {
             'menu': {
               'main': {
                   'bg': [path.join(MENU_DIR, 'ct-menu-main-bg-0.jpg')]

@@ -27,10 +27,12 @@ This module contains the intro slides implementation.
 
 try:
     import constants, pygame, graphics
+    from os import path
     from pygame.locals import *
     from os_utils import safe_exit
     from resource_manager import ResourceManager
     from mvc import SafeExitEvent, EventManager, EscapeEvent, ReturnEvent
+    from config_parser import ConfigParser
 except (RuntimeError, ImportError) as err:
         import os
         from constants import MOD_FAIL_ERR
@@ -134,13 +136,16 @@ class IntroCutSceneGUIView:
 
         self.screen = pygame.display.get_surface()
 
-        sl = len(slides)
-        if not sl:
+        if not len(slides):
             raise SlideLenError('Incorrect slide length: {0}'.format(sl))
 
         self.slides = slides
 
-        self.blank = ResourceManager().getImage(constants.FILES['graphics']['intro']['blank'][0])
+        parser = ConfigParser(constants.MAIN_CFG, constants.CFG_XMLNS)
+        dir_name = parser.first_match('intro').attrib
+        file_path = path.join(dir_name['dir'], parser.first_match('blank').text)
+
+        self.blank = ResourceManager().getImage(file_path)
         self.alphavalue = MAX_ALPHA
 
     def notify(self, event):
