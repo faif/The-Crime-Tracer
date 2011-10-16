@@ -76,6 +76,26 @@ class TravelGO(TravelSprite):
             self._limiter.run(self)
 
 
+class ExplosionGO(StaticAnimation):
+    def __init__(self, sheet, position, layer, alpha, reuse, width, height, fps):
+        super(ExplosionGO, self).__init__(sheet, position, layer, alpha, reuse, width, height, fps)
+
+    def update(self, interval):
+        super(ExplosionGO, self).update(interval)
+
+        self.arrangeRectangle()
+
+
+class RunningGO(StaticAnimation):
+    def __init__(self, sheet, position, layer, alpha, reuse, width, height, fps):
+        super(RunningGO, self).__init__(sheet, position, layer, alpha, reuse, width, height, fps)
+
+    def update(self, interval):
+        super(RunningGO, self).update(interval)
+
+        self.arrangeRectangle()
+
+
 def main():
     pygame.init()
 
@@ -118,6 +138,12 @@ def main():
     for sprite in sprites:
         sprite.limiter = defaultLimiter
 
+    explosionGO = ExplosionGO("sprite/explosion.png", (area.center), random.randint(0, 30), random.randint(20, 255), False, 20, 20, 10)
+    runningGO = RunningGO("sprite/character-hand.png", (area.center), random.randint(0, 30), random.randint(20, 255), False, 50, 72, 10)
+
+    sprites.append(explosionGO)
+    sprites.append(runningGO)
+
     group = pygame.sprite.LayeredUpdates((sprites))
 
     background = ResourceManager().getImage("sprite/background.jpg")
@@ -146,7 +172,10 @@ def main():
                 hipparchusGO.position = pygame.mouse.get_pos()
                 hipparchusGO._layer = random.choice(group.layers())
                 hipparchusGO.speed = random.randint(50, 150)
-                hipparchusGO.alpha = random.randint(20, 255)
+
+                runningGO.position = pygame.mouse.get_pos()
+                explosionGO._layer = random.choice(group.layers())
+                explosionGO.alpha = random.randint(20, 255)
 
         time_passed_seconds = clock.tick() / 1000.0
 

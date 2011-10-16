@@ -47,6 +47,8 @@ __all__ = [
             'ShakingSprite',
             'HipparchusSprite',
 
+            'StaticAnimation',
+
             'AreaLimiter',
             'LimiterFactory'
           ]
@@ -83,8 +85,7 @@ class MinimumMaximum(object):
 
 class ValueBounder(MinimumMaximum):
     def __init__(self, type, minimum, maximum):
-        # super(ValueBounder, self).__init__(type, minimum, maximum)
-        MinimumMaximum.__init__(self, type, minimum, maximum)
+        super(ValueBounder, self).__init__(type, minimum, maximum)
 
     def check(self, value):
         if isinstance(value, self.type):
@@ -188,6 +189,30 @@ class LayerHandler(Borg):
 
     def handle(self, layer):
         return LayerHandler.__filter.check(layer)
+
+
+class SizeHandler(Borg):
+    __minimum, __maximum = 1, 1000
+
+    __filter = FilterFactory().getInstance('Integer', __minimum, __maximum)
+
+    def __init__(self):
+        super(SizeHandler, self).__init__()
+
+    def handle(self, size):
+        return SizeHandler.__filter.check(size)
+
+
+class FPSHandler(Borg):
+    __minimum, __maximum = 1, 100
+
+    __filter = FilterFactory().getInstance('Integer', __minimum, __maximum)
+
+    def __init__(self):
+        super(FPSHandler, self).__init__()
+
+    def handle(self, fps):
+        return FPSHandler.__filter.check(fps)
 
 
 class Cardinal(Borg):
@@ -472,3 +497,106 @@ class HipparchusSprite(DynamicSprite):
         heading = Vector2(dx, dy)
 
         self._position += heading * self._distance
+
+
+class StaticAnimation(pygame.sprite.Sprite):
+    def __init__(self, sheet, position, layer, alpha, reuse, width, height, fps):
+        super(StaticAnimation, self).__init__()
+
+        self.position = position
+        self._layer = layer
+        self.reuse = reuse
+
+        self.useSpriteSheet(sheet, width, height, fps)
+
+        self.alpha = alpha
+
+        self.arrangeRectangle()
+
+    @property
+    def position(self):
+        return tuple(self._position)
+
+    @position.setter
+    def position(self, position):
+        self._position = Vector2(position)
+
+    @property
+    def _layer(self):
+        return self.layer
+
+    @_layer.setter
+    def _layer(self, layer):
+        self.layer = LayerHandler().handle(layer)
+        for group in self.groups():
+            group.change_layer(self, layer)
+
+    @property
+    def reuse(self):
+        return self._reuse
+
+    @reuse.setter
+    def reuse(self, reuse):
+        self._reuse = reuse
+
+    @property
+    def alpha(self):
+        return self._image.get_alpha()
+
+    @alpha.setter
+    def alpha(self, alpha):
+        alpha = AlphaHandler().handle(alpha)
+        for image in self._images:
+            image.set_alpha(alpha)
+
+    @property
+    def image(self):
+        return self._image
+
+    @property
+    def rect(self):
+        return self._rect
+
+    def arrangeRectangle(self):
+        self._rect = self._image.get_rect(center=tuple(self._position))
+
+    def arrangePosition(self):
+        self._position = Vector2(self._rect.center)
+
+    def useSpriteSheet (self, sheet, width, height, fps):
+        width = SizeHandler().handle(width)
+        height = SizeHandler().handle(height)
+        fps = FPSHandler().handle(fps)
+
+        self._images = self._sliceSpriteSheet (sheet, width, height)
+
+        self._delay = 1000 / fps
+        self._last_update = 0
+        self._frame = 0
+
+        self._image = self._images[self._frame]
+
+    def _sliceSpriteSheet (self, sheet, width, height):
+        images = []
+
+        masterImage = ResourceManager().getImage(sheet, self._reuse)
+
+        masterWidth, masterHeight = masterImage.get_size ()
+
+        for i in range (int (masterWidth / width)):
+            images.append (masterImage.subsurface ((i * width, 0, width, height)))
+
+        return images
+
+    def update(self, interval):
+        interval = pygame.time.get_ticks()
+
+        if interval - self._last_update > self._delay:
+            self._frame += 1
+
+            if self._frame >= len(self._images):
+                self._frame = 0
+                self._last_update = 0
+
+            self._image = self._images[self._frame]
+            self._last_update = interval
