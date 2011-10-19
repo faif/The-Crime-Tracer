@@ -56,8 +56,7 @@ MENU_DIR = 'menu'
 SHARE_DIR = 'share'
 
 '''game resolution'''
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH, SCREEN_HEIGHT = (800, 600)
 
 '''scene names'''
 SCENES = { 'intro':'introduction', 'menu':'main menu', 'level_one': 'first level' }
