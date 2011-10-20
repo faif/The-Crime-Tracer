@@ -1,2 +1,5 @@
-include COPYING README
+include AUTHORS BUGS ChangeLog COPYING NEWS README THANKS
+recursive-include tct/gameobjects *.py
+recursive-include tct/resources *.ogg *.jpg *.png *.ttf
+recursive-include tct/ *.xml
 recursive-include doc *.html *.css *.png *.pdf

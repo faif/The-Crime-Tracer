@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name = 'tct',
-    packages = ['src'],         # TODO: rename to tct
+    packages = ['tct'],
     version = '1.0',
     description = 'A classic 2D adventure crime game',
     author = 'Free Software Gaming Geeks',
