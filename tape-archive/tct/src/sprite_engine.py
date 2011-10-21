@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-#    Sprite Movement, Animation Utilities.
+#    Sprite Animation & Movement Engine.
 #
 #    This file is part of The Crime Tracer.
 #
