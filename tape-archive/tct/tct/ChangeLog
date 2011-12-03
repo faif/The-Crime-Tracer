@@ -3,29 +3,26 @@ The Crime Tracer -- `Changelog' starts here.
 Changelog:
 
 2010-12-05  Sakis Kasampalis <faif@dtek.gr>
+
 	* Refactored all files to be python 3 compatible.
 
 2009-10-11  Efstathios Xatzikiriakidis  <contact@efxa.org>
 
-    * intro.py (Intro): Add class for intro screen implementation.
-    * cut_scenes.py (CutScenes): Add class for cut scenes action.
+	* intro.py (Intro): Add class for intro screen implementation.
+	* cut_scenes.py (CutScenes): Add class for cut scenes action.
 
 2009-09-13  Efstathios Xatzikiriakidis  <contact@efxa.org>
 
-    * *.py: Perform all PEP 8 instructions.
-    * menu.py (Menu_Screen): Rename class to `Menu'.
-    * credits.py (Credits_Screen): Rename class to `Credits'.
+	* *.py: Perform all PEP 8 instructions.
+	* menu.py (Menu_Screen): Rename class to `Menu'.
+	* credits.py (Credits_Screen): Rename class to `Credits'.
 
 2009-09-11  Efstathios Xatzikiriakidis  <contact@efxa.org>
 
-	* menu.py (menu_settings): Display the menu settings list
-      always in the middle of the window screen regardless of
-      the resolution of the game.
+	* menu.py (menu_settings): Display menu settings list always in the middle.
 
 2009-09-10  Efstathios Xatzikiriakidis  <contact@efxa.org>
 
-	* credits.py (Credits): Improve the parser in the constructor
-      of the Credits class. Parse now can accept more token, tags
-      and ignores any comment lines.
+	* credits.py (Credits): Improve the parser in the constructor of the Credits class.
 
 The Crime Tracer -- `Changelog' ends here.
